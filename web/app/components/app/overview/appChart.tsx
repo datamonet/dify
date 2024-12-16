@@ -235,7 +235,8 @@ const Chart: React.FC<IChartProps> = ({
       <div className='mb-3'>
         <Basic name={title} type={timePeriod} hoverTip={explanation} />
       </div>
-      <div className='mb-4 flex-1'>
+      {/* Takin.AI command: hidden overview的美元显示 */}
+      {/* <div className='mb-4 flex-1'>
         <Basic
           isExtraInLine={CHART_TYPE_CONFIG[chartType].showTokens}
           name={chartType !== 'costs' ? (sumData.toLocaleString() + unit) : `${sumData < 1000 ? sumData : (`${formatNumber(Math.round(sumData / 1000))}k`)}`}
@@ -247,7 +248,7 @@ const Chart: React.FC<IChartProps> = ({
               <span className='text-gray-500'>)</span>
             </span></span>}
           textStyle={{ main: `!text-3xl !font-normal ${sumData === 0 ? '!text-gray-300' : ''}` }} />
-      </div>
+      </div> */}
       <ReactECharts option={options} style={{ height: 160 }} />
     </div>
   )

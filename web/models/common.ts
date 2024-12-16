@@ -30,6 +30,9 @@ export type UserProfileResponse = {
   last_active_at?: string
   last_login_ip?: string
   created_at?: string
+  takin_id?: string // takin command:takin account id
+  credits?: number // takin command
+  role?: number // takin command 
 }
 
 export type UserProfileOriginResponse = {

@@ -79,6 +79,7 @@ const translation = {
     modifiedSuccessfully: 'Modifié avec succès',
     modifiedUnsuccessfully: 'Modifié sans succès',
     copySuccessfully: 'Copié avec succès',
+    copyLinkSuccessfully: 'Lien copié dans le presse-papiers',
     paySucceeded: 'Paiement réussi',
     payCancelled: 'Paiement annulé',
     generatedSuccessfully: 'Généré avec succès',

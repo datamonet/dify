@@ -83,6 +83,7 @@ const translation = {
     modifiedSuccessfully: 'Modificado exitosamente',
     modifiedUnsuccessfully: 'Modificación no exitosa',
     copySuccessfully: 'Copiado exitosamente',
+    copyLinkSuccessfully: 'Enlace copiado al portapapeles',
     paySucceeded: 'Pago exitoso',
     payCancelled: 'Pago cancelado',
     generatedSuccessfully: 'Generado exitosamente',

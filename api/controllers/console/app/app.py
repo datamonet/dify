@@ -62,7 +62,8 @@ class AppListApi(Resource):
 
         # get app list
         app_service = AppService()
-        app_pagination = app_service.get_paginate_apps(current_user.current_tenant_id, args)
+        # takin command:增加用户的id过滤
+        app_pagination = app_service.get_paginate_apps(current_user.current_tenant_id, current_user.id, args)
         if not app_pagination:
             return {"data": [], "total": 0, "page": 1, "limit": 20, "has_more": False}
 

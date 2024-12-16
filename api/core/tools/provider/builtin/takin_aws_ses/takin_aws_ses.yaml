@@ -1,0 +1,48 @@
+identity:
+  author: Takin.AI
+  name: takin_aws_ses
+  label:
+    en_US: AWS SES Email
+    zh_Hans: AWS SES Email
+    pt_BR: AWS SES Email
+  description:
+    en_US: Send emails using AWS Simple Email Service (SES)
+    zh_Hans: 使用 AWS 电子邮件服务 (SES) 发送电子邮件
+    pt_BR: Send emails using AWS Simple Email Service (SES)
+  icon: icon.svg
+  tags:
+    - social
+credentials_for_provider:
+  access_key:
+    type: secret-input
+    required: true
+    label:
+      en_US: EMAIL ACCESS KEY
+      zh_Hans: EMAIL ACCESS KEY
+      pt_BR: EMAIL ACCESS KEY
+    placeholder:
+      en_US: Please input your AWS EMAIL ACCESS KEY
+      zh_Hans: 请输入您的AWS EMAIL ACCESS KEY
+      pt_BR: Please input your AWS EMAIL ACCESS KEY
+  secret_access_key:
+    type: secret-input
+    required: true
+    label:
+      en_US: EMAIL SECRET ACCESS KEY
+      zh_Hans: EMAIL SECRET ACCESS KEY
+      pt_BR: EMAIL SECRET ACCESS KEY
+    placeholder:
+      en_US: Please input your AWS EMAIL SECRET ACCESS KEY
+      zh_Hans: 请输入您的AWS EMAIL SECRET ACCESS KEY
+      pt_BR: Please input your AWS EMAIL SECRET ACCESS KEY
+  region_name:
+    type: secret-input
+    required: true
+    label:
+      en_US: REGION NAME
+      zh_Hans: REGION NAME
+      pt_BR: REGION NAME
+    placeholder:
+      en_US: Please input your AWS REGION NAME
+      zh_Hans: 请输入您的AWS REGION NAME
+      pt_BR: Please input your AWS REGION NAME

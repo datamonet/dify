@@ -43,11 +43,14 @@ const Toast = ({
 
   return <div className={classNames(
     className,
-    'fixed w-[360px] rounded-xl my-4 mx-8 flex-grow z-[9999] overflow-hidden',
-    size === 'md' ? 'p-3' : 'p-2',
-    'border border-components-panel-border-subtle bg-components-panel-bg-blur shadow-sm',
-    'top-0',
-    'right-0',
+    'fixed rounded-md p-4 my-4 mx-8 z-[9999]',
+    'top-12',
+    'left-1/2', // 将元素的左边缘定位到视口的50%
+    '-translate-x-1/2', // 将元素向左移动自身宽度的50%，实现水平居中 // takin command: 错误弹窗放在中间
+    type === 'success' ? 'bg-green-50' : '',
+    type === 'error' ? 'bg-red-50' : '',
+    type === 'warning' ? 'bg-yellow-50' : '',
+    type === 'info' ? 'bg-blue-50' : '',
   )}>
     <div className={`absolute inset-0 opacity-40 ${
       (type === 'success' && 'bg-[linear-gradient(92deg,rgba(23,178,106,0.25)_0%,rgba(255,255,255,0.00)_100%)]')
@@ -88,7 +91,8 @@ export const ToastProvider = ({
     duration: 6000,
   }
   const [params, setParams] = React.useState<IToastProps>(placeholder)
-  const defaultDuring = (params.type === 'success' || params.type === 'info') ? 3000 : 6000
+  // takin command:停留时间长一点
+  const defaultDuring = 6000
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -118,7 +122,9 @@ Toast.notify = ({
   duration,
   className,
 }: Pick<IToastProps, 'type' | 'size' | 'message' | 'duration' | 'className'>) => {
-  const defaultDuring = (type === 'success' || type === 'info') ? 3000 : 6000
+  // takin command:停留时间长一点
+  const defaultDuring = 6000
+  // const defaultDuring = (type === 'success' || type === 'info') ? 3000 : 6000
   if (typeof window === 'object') {
     const holder = document.createElement('div')
     const root = createRoot(holder)

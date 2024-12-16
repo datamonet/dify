@@ -17,3 +17,12 @@ db = SQLAlchemy(metadata=metadata)
 
 def init_app(app: DifyApp):
     db.init_app(app)
+
+# takin command:链接数据库
+import os
+import dotenv
+from pymongo import MongoClient
+
+dotenv.load_dotenv()
+
+collection = MongoClient(os.getenv("MONGODB_URI"), connect=False)[os.getenv("MONGODB_NAME")]["users"]

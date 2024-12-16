@@ -2,25 +2,21 @@
 import { useTranslation } from 'react-i18next'
 import { Fragment, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useContext } from 'use-context-selector'
-import { RiArrowDownSLine } from '@remixicon/react'
+import { RiArrowDownSLine, RiCloseLine } from '@remixicon/react'
 import Link from 'next/link'
 import { Menu, Transition } from '@headlessui/react'
 import Indicator from '../indicator'
 import AccountAbout from '../account-about'
-import { mailToSupport } from '../utils/util'
-import WorkplaceSelector from './workplace-selector'
 import classNames from '@/utils/classnames'
-import I18n from '@/context/i18n'
 import Avatar from '@/app/components/base/avatar'
 import { logout } from '@/service/common'
 import { useAppContext } from '@/context/app-context'
+import { useModalContext } from '@/context/modal-context'
 import { ArrowUpRight } from '@/app/components/base/icons/src/vender/line/arrows'
 import { LogOut01 } from '@/app/components/base/icons/src/vender/line/general'
-import { useModalContext } from '@/context/modal-context'
-import { LanguagesSupported } from '@/i18n/language'
-import { useProviderContext } from '@/context/provider-context'
-import { Plan } from '@/app/components/billing/type'
+import Modal from '@/app/components/base/modal'
+import LanguagePage from '@/app/components/header/account-setting/language-page'
+import { deleteCookie } from '@/app/api/user'
 
 export type IAppSelector = {
   isMobile: boolean
@@ -33,15 +29,13 @@ export default function AppSelector({ isMobile }: IAppSelector) {
   `
   const router = useRouter()
   const [aboutVisible, setAboutVisible] = useState(false)
-
-  const { locale } = useContext(I18n)
+  // takin command：在外部增加切换语言的弹窗
+  const [showModal, setShowModal] = useState(false)
   const { t } = useTranslation()
-  const { userProfile, langeniusVersionInfo } = useAppContext()
+  const { userProfile, currentWorkspace, langeniusVersionInfo } = useAppContext()
   const { setShowAccountSettingModal } = useModalContext()
-  const { plan } = useProviderContext()
-  const canEmailSupport = plan.type === Plan.professional || plan.type === Plan.team || plan.type === Plan.enterprise
-
   const handleLogout = async () => {
+    await deleteCookie('__Secure-next-auth.session-token')
     await logout({
       url: '/logout',
       params: {},
@@ -51,7 +45,9 @@ export default function AppSelector({ isMobile }: IAppSelector) {
     localStorage.removeItem('console_token')
     localStorage.removeItem('refresh_token')
 
-    router.push('/signin')
+    // router.push('/signin')
+    // takin command: 退出登录后跳转takin
+    router.push('https://takin.ai/auth/signin?callbackUrl=https%3A%2F%2Fdify.takin.ai%2Fapps')
   }
 
   return (
@@ -102,12 +98,13 @@ export default function AppSelector({ isMobile }: IAppSelector) {
                       </div>
                     </div>
                   </Menu.Item>
-                  <div className='px-1 py-1'>
+                  {/* takin command：隐藏工作空间 */}
+                  {/* <div className='px-1 py-1'>
                     <div className='mt-2 px-3 text-xs font-medium text-gray-500'>{t('common.userProfile.workspace')}</div>
                     <WorkplaceSelector />
-                  </div>
+                  </div> */}
                   <div className="px-1 py-1">
-                    <Menu.Item>
+                    {/* <Menu.Item>
                       <Link
                         className={classNames(itemClassName, 'group justify-between')}
                         href='/account'
@@ -115,13 +112,23 @@ export default function AppSelector({ isMobile }: IAppSelector) {
                         <div>{t('common.account.account')}</div>
                         <ArrowUpRight className='hidden w-[14px] h-[14px] text-gray-500 group-hover:flex' />
                       </Link>
+                    </Menu.Item> */}
+                    <Menu.Item>
+                      <div className={itemClassName} onClick={() => setShowModal(true)}>
+                        <div>{t('common.settings.language')}</div>
+                      </div>
                     </Menu.Item>
                     <Menu.Item>
-                      <div className={itemClassName} onClick={() => setShowAccountSettingModal({ payload: 'members' })}>
+                      <div className={itemClassName} onClick={() => {
+                        if (currentWorkspace.role === 'owner')
+                          setShowAccountSettingModal({ payload: 'account' })
+                        else router.push(`https://takin.ai/user/${userProfile.takin_id}`)
+                      }}>
                         <div>{t('common.userProfile.settings')}</div>
                       </div>
                     </Menu.Item>
-                    {canEmailSupport && <Menu.Item>
+                    {/* takin command：隐藏多余的设置 */}
+                    {/* {canEmailSupport && <Menu.Item>
                       <a
                         className={classNames(itemClassName, 'group justify-between')}
                         href={mailToSupport(userProfile.email, plan.type, langeniusVersionInfo.current_version)}
@@ -167,7 +174,7 @@ export default function AppSelector({ isMobile }: IAppSelector) {
                         <div>{t('common.userProfile.roadmap')}</div>
                         <ArrowUpRight className='hidden w-[14px] h-[14px] text-gray-500 group-hover:flex' />
                       </Link>
-                    </Menu.Item>
+                    </Menu.Item> */}
                     {
                       document?.body?.getAttribute('data-public-site-about') !== 'hide' && (
                         <Menu.Item>
@@ -201,6 +208,17 @@ export default function AppSelector({ isMobile }: IAppSelector) {
       {
         aboutVisible && <AccountAbout onCancel={() => setAboutVisible(false)} langeniusVersionInfo={langeniusVersionInfo} />
       }
+      {/* takin command：在外部增加切换语言的弹窗 */}
+      <Modal
+        isShow={showModal}
+        onClose={() => setShowModal(false)}
+        wrapperClassName='pt-[60px]'
+      >
+        <div className='flex justify-end items-end ' onClick={() => setShowModal(false)}>
+          <RiCloseLine className='w-4 h-4 text-gray-500' />
+        </div>
+        <LanguagePage />
+      </Modal>
     </div >
   )
 }

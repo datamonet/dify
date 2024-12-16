@@ -79,6 +79,7 @@ const translation = {
     modifiedSuccessfully: '修改成功',
     modifiedUnsuccessfully: '修改失敗',
     copySuccessfully: '複製成功',
+    copyLinkSuccessfully: '鏈接已複製到剪貼板',
     generatedSuccessfully: '已重新生成',
     generatedUnsuccessfully: '生成失敗',
     paySucceeded: '已支付成功',

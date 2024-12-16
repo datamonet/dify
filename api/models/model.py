@@ -64,6 +64,7 @@ class App(db.Model):
     __table_args__ = (db.PrimaryKeyConstraint("id", name="app_pkey"), db.Index("app_tenant_id_idx", "tenant_id"))
 
     id = db.Column(StringUUID, server_default=db.text("uuid_generate_v4()"))
+    user_id = db.Column(StringUUID, nullable=False) # takin command: 增加用户ID
     tenant_id: Mapped[str] = db.Column(StringUUID, nullable=False)
     name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=False, server_default=db.text("''::character varying"))
@@ -88,6 +89,7 @@ class App(db.Model):
     updated_by = db.Column(StringUUID, nullable=True)
     updated_at = db.Column(db.DateTime, nullable=False, server_default=db.text("CURRENT_TIMESTAMP(0)"))
     use_icon_as_answer_icon = db.Column(db.Boolean, nullable=False, server_default=db.text("false"))
+    username = db.Column(db.String, nullable=True)  # takin command:为了显示 username 字段
 
     @property
     def desc_or_prompt(self):

@@ -26,14 +26,16 @@ from tasks.remove_app_and_related_data_task import remove_app_and_related_data_t
 
 
 class AppService:
-    def get_paginate_apps(self, tenant_id: str, args: dict) -> Pagination | None:
+    def get_paginate_apps(self, tenant_id: str, user_id: str, args: dict) -> Pagination | None:
         """
         Get app list with pagination
+        Takin command: 增加用户id
         :param tenant_id: tenant id
+        :param user_id: user id
         :param args: request args
         :return:
         """
-        filters = [App.tenant_id == tenant_id, App.is_universal == False]
+        filters = [App.tenant_id == tenant_id, App.user_id == user_id, App.is_universal == False]
 
         if args["mode"] == "workflow":
             filters.append(App.mode.in_([AppMode.WORKFLOW.value, AppMode.COMPLETION.value]))

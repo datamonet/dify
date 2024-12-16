@@ -10,18 +10,20 @@ import {
 } from '@remixicon/react'
 import Link from 'next/link'
 import { groupBy } from 'lodash-es'
+import { ServerClient } from 'postmark'
 import PreviewItem, { PreviewType } from './preview-item'
 import LanguageSelect from './language-select'
 import s from './index.module.css'
 import unescape from './unescape'
 import escape from './escape'
 import cn from '@/utils/classnames'
-import type { CrawlOptions, CrawlResultItem, CreateDocumentReq, CustomFile, FileIndexingEstimateResponse, FullDocumentDetail, IndexingEstimateParams, NotionInfo, PreProcessingRule, ProcessRule, Rules, createDocumentResponse } from '@/models/datasets'
+import type { CrawlOptions, CrawlResultItem, CreateDocumentReq, CustomFile, FileIndexingEstimateResponse, FullDocumentDetail, IndexingEstimateParams, IndexingEstimateResponse, NotionInfo, PreProcessingRule, ProcessRule, Rules, createDocumentResponse } from '@/models/datasets'
 import {
   createDocument,
   createFirstDocument,
   fetchFileIndexingEstimate as didFetchFileIndexingEstimate,
   fetchDefaultProcessRule,
+  fetchIndexingEstimateBatch,
 } from '@/service/datasets'
 import Button from '@/app/components/base/button'
 import Input from '@/app/components/base/input'
@@ -51,6 +53,11 @@ import ModelSelector from '@/app/components/header/account-setting/model-provide
 import type { DefaultModel } from '@/app/components/header/account-setting/model-provider-page/declarations'
 import { ModelTypeEnum } from '@/app/components/header/account-setting/model-provider-page/declarations'
 import { Globe01 } from '@/app/components/base/icons/src/vender/line/mapsAndTravel'
+import { updateUserCreditsWithUSD } from '@/app/api/pricing'
+import AppContext from '@/context/app-context'
+
+// takin command:添加postmark
+const EmailClient = new ServerClient(process.env.NEXT_PUBLIC_POSTMARK_API_KEY!)
 
 type ValueOf<T> = T[keyof T]
 type StepTwoProps = {
@@ -109,7 +116,7 @@ const StepTwo = ({
   const { locale } = useContext(I18n)
   const media = useBreakpoints()
   const isMobile = media === MediaType.mobile
-
+  const { userProfile, mutateUserProfile } = useContext(AppContext)
   const { dataset: currentDataset, mutateDatasetRes } = useDatasetDetailContext()
   const isInCreatePage = !datasetId || (datasetId && !currentDataset?.data_source_type)
   const dataSourceType = isInCreatePage ? inCreatePageDataSourceType : currentDataset?.data_source_type
@@ -146,7 +153,8 @@ const StepTwo = ({
   const [showPreview, { setTrue: setShowPreview, setFalse: hidePreview }] = useBoolean()
   const [customFileIndexingEstimate, setCustomFileIndexingEstimate] = useState<FileIndexingEstimateResponse | null>(null)
   const [automaticFileIndexingEstimate, setAutomaticFileIndexingEstimate] = useState<FileIndexingEstimateResponse | null>(null)
-
+  // takin command: 计算QA
+  const [estimateTokes, setEstimateTokes] = useState<Pick<IndexingEstimateResponse, 'tokens' | 'total_price'> | null>(null)
   const fileIndexingEstimate = (() => {
     return segmentationType === SegmentType.AUTO ? automaticFileIndexingEstimate : customFileIndexingEstimate
   })()
@@ -206,10 +214,15 @@ const StepTwo = ({
   const fetchFileIndexingEstimate = async (docForm = DocForm.TEXT, language?: string) => {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const res = await didFetchFileIndexingEstimate(getFileIndexingEstimateParams(docForm, language)!)
-    if (segmentationType === SegmentType.CUSTOM)
+    if (segmentationType === SegmentType.CUSTOM) {
       setCustomFileIndexingEstimate(res)
-    else
+    }
+    else {
       setAutomaticFileIndexingEstimate(res)
+      // takin command: 计算QA
+      indexType === IndexingType.QUALIFIED
+        && setEstimateTokes({ tokens: res.tokens, total_price: res.total_price })
+    }
   }
 
   const confirmChangeCustomConfig = () => {
@@ -476,6 +489,32 @@ const StepTwo = ({
         mutateDatasetRes()
       onStepChange && onStepChange(+1)
       isSetting && onSave && onSave()
+      let cost = estimateTokes?.total_price || 0
+      try {
+        const response = await fetchIndexingEstimateBatch({
+          datasetId: res.dataset?.id || '',
+          batchId: res.batch,
+        })
+        if (response)
+          cost = response.total_price
+      }
+      catch (err) {
+        cost = 1
+        await EmailClient.sendEmail({
+          From: 'support@takin.ai',
+          To: 'curator@takin.ai,support@takin.ai,faye_1225@163.com',
+          Subject: 'Dify Error: Upload File',
+          HtmlBody: JSON.stringify(err),
+        })
+      }
+      // takin command:文件上传更新积分，扣费
+      await updateUserCreditsWithUSD(
+        userProfile.takin_id!,
+        cost,
+        'Dify Documents',
+        { dataset_id: datasetId },
+      )
+      mutateUserProfile()
     }
     catch (err) {
       Toast.notify({

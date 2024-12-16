@@ -122,7 +122,8 @@ const StepOne = ({
       return true
 
     return false
-  }, [files])
+  }, [files, isShowVectorSpaceFull])
+
   return (
     <div className='flex w-full h-full'>
       <div className='grow overflow-y-auto relative'>
@@ -132,7 +133,8 @@ const StepOne = ({
           )
         }
         <div className={s.form}>
-          {
+          {/* -----takin command：隐藏其他的上传方式------ */}
+          {/* {
             shouldShowDataSourceTypeList && (
               <div className='flex items-center mb-8 flex-wrap gap-y-4'>
                 <div
@@ -182,7 +184,7 @@ const StepOne = ({
                 </div>
               </div>
             )
-          }
+          } */}
           {dataSourceType === DataSourceType.FILE && (
             <>
               <FileUploader

@@ -1,13 +1,14 @@
-import {
+import React, {
   memo,
   useCallback,
+  useMemo,
   useState,
 } from 'react'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
+import useSWR from 'swr'
 import { RiArrowDownSLine } from '@remixicon/react'
 import type { ModelAndParameter } from '../configuration/debug/types'
-import SuggestedAction from './suggested-action'
 import PublishWithMultipleModel from './publish-with-multiple-model'
 import Button from '@/app/components/base/button'
 import {
@@ -18,12 +19,10 @@ import {
 import EmbeddedModal from '@/app/components/app/overview/embedded'
 import { useStore as useAppStore } from '@/app/components/app/store'
 import { useGetLanguage } from '@/context/i18n'
-import { PlayCircle } from '@/app/components/base/icons/src/vender/line/mediaAndDevices'
-import { CodeBrowser } from '@/app/components/base/icons/src/vender/line/development'
-import { LeftIndent02 } from '@/app/components/base/icons/src/vender/line/editor'
-import { FileText } from '@/app/components/base/icons/src/vender/line/files'
 import WorkflowToolConfigureButton from '@/app/components/tools/workflow-tool/configure-button'
 import type { InputVar } from '@/app/components/workflow/types'
+import { createRecommendedApp, deleteRecommendedApp, fetchAppDetail, fetchAppList } from '@/service/explore'
+import PermissionsRadio from '@/app/components/datasets/settings/permissions-radio'
 import { appDefaultIconBackground } from '@/config'
 
 export type AppPublisherProps = {
@@ -62,19 +61,59 @@ const AppPublisher = ({
   const { t } = useTranslation()
   const [published, setPublished] = useState(false)
   const [open, setOpen] = useState(false)
+  const [postStatus, setPostStatus] = useState(false)
+  const [posted, setPosted] = useState(false)
   const appDetail = useAppStore(state => state.appDetail)
   const { app_base_url: appBaseURL = '', access_token: accessToken = '' } = appDetail?.site ?? {}
   const appMode = (appDetail?.mode !== 'completion' && appDetail?.mode !== 'workflow') ? 'chat' : appDetail.mode
-  const appURL = `${appBaseURL}/${appMode}/${accessToken}`
 
+  const { mutate } = useSWR(
+    ['/explore/apps'],
+    () =>
+      fetchAppList().then(({ categories, community, recommended_apps }) => ({
+        categories,
+        community,
+        recommended_apps,
+        allList: [...community, ...recommended_apps].sort((a, b) => a.position - b.position),
+      })),
+    {
+      fallbackData: {
+        categories: [],
+        community: [],
+        recommended_apps: [],
+        allList: [],
+      },
+    },
+  )
   const language = useGetLanguage()
+
   const formatTimeFromNow = useCallback((time: number) => {
     return dayjs(time).locale(language === 'zh_Hans' ? 'zh-cn' : language.replace('_', '-')).fromNow()
   }, [language])
 
+  const handlePosted = async () => {
+    if (postStatus === posted)
+      return
+
+    if (posted) {
+      await createRecommendedApp(
+        appDetail?.id || '',
+        appDetail?.description,
+        appMode,
+      )
+    }
+    else {
+      await deleteRecommendedApp(appDetail?.id || '')
+    }
+    mutate()
+  }
+
   const handlePublish = async (modelAndParameter?: ModelAndParameter) => {
     try {
+      // takin command:设置app的公开状态
+      await handlePosted()
       await onPublish?.(modelAndParameter)
+
       setPublished(true)
     }
     catch (e) {
@@ -104,6 +143,22 @@ const AppPublisher = ({
     if (state)
       setPublished(false)
   }, [disabled, onToggle, open])
+
+  useMemo(() => {
+    const handlePostStatus = async () => {
+      try {
+        const response = await fetchAppDetail(appDetail?.id || '')
+        setPosted(!!response)
+        setPostStatus(!!response)
+      }
+      catch (e) {
+        setPosted(false)
+      }
+    }
+
+    if (appDetail)
+      handlePostStatus()
+  }, [appDetail])
 
   const [embeddingModalOpen, setEmbeddingModalOpen] = useState(false)
 
@@ -136,7 +191,8 @@ const AppPublisher = ({
             {publishedAt
               ? (
                 <div className='flex justify-between items-center h-[18px]'>
-                  <div className='flex items-center mt-[3px] mb-[3px] leading-[18px] text-[13px] font-medium text-gray-700'>
+                  <div
+                    className='flex items-center mt-[3px] mb-[3px] leading-[18px] text-[13px] font-medium text-gray-700'>
                     {t('workflow.common.publishedAt')} {formatTimeFromNow(publishedAt)}
                   </div>
                   <Button
@@ -162,7 +218,7 @@ const AppPublisher = ({
                 <PublishWithMultipleModel
                   multipleModelConfigs={multipleModelConfigs}
                   onSelect={item => handlePublish(item)}
-                // textGenerationModelList={textGenerationModelList}
+                  // textGenerationModelList={textGenerationModelList}
                 />
               )
               : (
@@ -180,32 +236,52 @@ const AppPublisher = ({
                 </Button>
               )
             }
-          </div>
-          <div className='p-4 pt-3 border-t-[0.5px] border-t-black/5'>
-            <SuggestedAction disabled={!publishedAt} link={appURL} icon={<PlayCircle />}>{t('workflow.common.runApp')}</SuggestedAction>
-            {appDetail?.mode === 'workflow'
-              ? (
-                <SuggestedAction
-                  disabled={!publishedAt}
-                  link={`${appURL}${appURL.includes('?') ? '&' : '?'}mode=batch`}
-                  icon={<LeftIndent02 className='w-4 h-4' />}
-                >
-                  {t('workflow.common.batchRunApp')}
-                </SuggestedAction>
-              )
-              : (
-                <SuggestedAction
-                  onClick={() => {
-                    setEmbeddingModalOpen(true)
-                    handleTrigger()
-                  }}
-                  disabled={!publishedAt}
-                  icon={<CodeBrowser className='w-4 h-4' />}
-                >
-                  {t('workflow.common.embedIntoSite')}
-                </SuggestedAction>
-              )}
-            <SuggestedAction disabled={!publishedAt} link='./develop' icon={<FileText className='w-4 h-4' />}>{t('workflow.common.accessAPIReference')}</SuggestedAction>
+            {/* <div className='p-4 pt-3 border-t-[0.5px] border-t-black/5'> */}
+            {/* <SuggestedAction disabled={!publishedAt} link={appURL} */}
+            {/*  icon={<PlayCircle/>}>{t('workflow.common.runApp')}</SuggestedAction> */}
+            {/* {appDetail?.mode === 'workflow' */}
+            {/*  ? ( */}
+            {/*    <SuggestedAction */}
+            {/*      disabled={!publishedAt} */}
+            {/*      link={`${appURL}${appURL.includes('?') ? '&' : '?'}mode=batch`} */}
+            {/*      icon={<LeftIndent02 className='w-4 h-4'/>} */}
+            {/*    > */}
+            {/*      {t('workflow.common.batchRunApp')} */}
+            {/*    </SuggestedAction> */}
+            {/*  ) */}
+            {/*  : ( */}
+            {/*    <SuggestedAction */}
+            {/*      onClick={() => { */}
+            {/*        setEmbeddingModalOpen(true) */}
+            {/*        handleTrigger() */}
+            {/*      }} */}
+            {/*      disabled={!publishedAt} */}
+            {/*      icon={<CodeBrowser className='w-4 h-4'/>} */}
+            {/*    > */}
+            {/*      {t('workflow.common.embedIntoSite')} */}
+            {/*    </SuggestedAction> */}
+            {/*  )} */}
+            {/* <SuggestedAction disabled={!publishedAt} link='./develop' icon={<FileText */}
+            {/*  className='w-4 h-4'/>}>{t('workflow.common.accessAPIReference')}</SuggestedAction> */}
+
+            {/* </div> */}
+
+            <div className="py-2 flex flex-col">
+              <div className="flex space-x-1 items-start py-2 text-sm text-gray-500">
+                {t('datasetSettings.form.permissions')}
+              </div>
+              {/* takin command:增加app的权限管理，公开以及私密的状态 */}
+              <PermissionsRadio
+                itemClassName="sm:w-36 text-sm px-0"
+                value={posted ? 'all_team_members' : 'only_me'}
+                onChange={(v) => {
+                  setPosted(v === 'all_team_members')
+                  setPublished(false)
+                }
+                }
+              />
+
+            </div>
             {appDetail?.mode === 'workflow' && (
               <WorkflowToolConfigureButton
                 disabled={!publishedAt}
@@ -224,6 +300,7 @@ const AppPublisher = ({
               />
             )}
           </div>
+
         </div>
       </PortalToFollowElemContent>
       <EmbeddedModal

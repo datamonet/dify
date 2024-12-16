@@ -15,6 +15,7 @@ import type { Tag } from '@/app/components/base/tag-management/constant'
 import Checkbox from '@/app/components/base/checkbox'
 import { bindTag, createTag, fetchTagList, unBindTag } from '@/service/tag'
 import { ToastContext } from '@/app/components/base/toast'
+import { useAppContext } from "@/context/app-context"
 
 type TagSelectorProps = {
   targetID: string
@@ -33,6 +34,7 @@ type PanelProps = {
 
 const Panel = (props: PanelProps) => {
   const { t } = useTranslation()
+  const { userProfile } = useAppContext()
   const { notify } = useContext(ToastContext)
   const { targetID, type, value, selectedTags, onCacheUpdate, onChange, onCreate } = props
   const tagList = useTagStore(s => s.tagList)
@@ -191,14 +193,17 @@ const Panel = (props: PanelProps) => {
         </div>
       )}
       <Divider className='!h-[1px] !my-0' />
-      <div className='p-1'>
-        <div className='flex items-center gap-2 pl-3 py-[6px] pr-2 rounded-lg cursor-pointer hover:bg-gray-100' onClick={() => setShowTagManagementModal(true)}>
-          <Tag03 className='h-4 w-4 text-gray-500' />
-          <div className='grow text-sm text-gray-700 leading-5 truncate'>
-            {t('common.tag.manageTags')}
+      {/* takin command：tag修改只能管理员 */}
+      {userProfile && (userProfile.role || 10) >= 50 && (
+        <div className='p-1'>
+          <div className='flex items-center gap-2 pl-3 py-[6px] pr-2 rounded-lg cursor-pointer hover:bg-gray-100' onClick={() => setShowTagManagementModal(true)}>
+            <Tag03 className='h-4 w-4 text-gray-500' />
+            <div className='grow text-sm text-gray-700 leading-5 truncate'>
+              {t('common.tag.manageTags')}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

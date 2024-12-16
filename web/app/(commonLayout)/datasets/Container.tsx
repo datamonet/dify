@@ -37,12 +37,19 @@ const Container = () => {
   const showTagManagementModal = useTagStore(s => s.showTagManagementModal)
   const { showExternalApiPanel, setShowExternalApiPanel } = useExternalApiPanel()
 
+  // const options = useMemo(() => {
+  //   return [
+  //     { value: 'dataset', text: t('dataset.datasets') },
+  //     ...(currentWorkspace.role === 'dataset_operator' ? [] : [{ value: 'api', text: t('dataset.datasetsApi') }]),
+  //   ]
+  // }, [currentWorkspace.role, t])
+
   const options = useMemo(() => {
     return [
       { value: 'dataset', text: t('dataset.datasets') },
-      ...(currentWorkspace.role === 'dataset_operator' ? [] : [{ value: 'api', text: t('dataset.datasetsApi') }]),
+      // takin command:hidden api page
     ]
-  }, [currentWorkspace.role, t])
+  }, [t])
 
   const [activeTab, setActiveTab] = useTabSearchParams({
     defaultTab: 'dataset',
@@ -107,7 +114,8 @@ const Container = () => {
       {activeTab === 'dataset' && (
         <>
           <Datasets containerRef={containerRef} tags={tagIDs} keywords={searchKeywords} />
-          <DatasetFooter />
+          {/* takin command:去除知识库底部 */}
+          {/* <DatasetFooter /> */}
           {showTagManagementModal && (
             <TagManagementModal type='knowledge' show={showTagManagementModal} />
           )}

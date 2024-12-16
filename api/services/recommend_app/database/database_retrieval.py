@@ -50,12 +50,15 @@ class DatabaseRecommendAppRetrieval(RecommendAppRetrievalBase):
             app = recommended_app.app
             if not app or not app.is_public:
                 continue
+            
+            # Takin command:此处暂时隐藏
+            # site = app.site
+            # if not site:
+            #     continue
 
-            site = app.site
-            if not site:
-                continue
-
-            recommended_app_result = {
+            user = db.session.query(Account).filter(Account.id == app.user_id).first()
+            doc = collection.find_one({"email": user.email})
+            app_result = {
                 "id": recommended_app.id,
                 "app": {
                     "id": app.id,
@@ -63,22 +66,30 @@ class DatabaseRecommendAppRetrieval(RecommendAppRetrievalBase):
                     "mode": app.mode,
                     "icon": app.icon,
                     "icon_background": app.icon_background,
+                    "username": doc.get("name") or user.name,
                 },
                 "app_id": recommended_app.app_id,
-                "description": site.description,
-                "copyright": site.copyright,
-                "privacy_policy": site.privacy_policy,
-                "custom_disclaimer": site.custom_disclaimer,
+                "description": app.description,
+                "copyright": "",
+                "privacy_policy": "",
+                "custom_disclaimer": "",
                 "category": recommended_app.category,
                 "position": recommended_app.position,
                 "is_listed": recommended_app.is_listed,
             }
-            recommended_apps_result.append(recommended_app_result)
+            # Takin.AI command 修改推荐的app TODO: 根据用户角色区分 -[mongo role = 50] admin的role才能推送到recommended_apps_result
+            if user.email == "curator@takin.ai":
+                recommended_apps_result.append(app_result)
+            else:
+                community_apps_result.append(app_result)
 
-            categories.add(recommended_app.category)
+            categories.add(recommended_app.category)  # add category to categories
 
-        return {"recommended_apps": recommended_apps_result, "categories": sorted(categories)}
-
+        return {
+            "recommended_apps": recommended_apps_result,
+            "community": community_apps_result,
+            "categories": sorted(categories),
+        }
     @classmethod
     def fetch_recommended_app_detail_from_db(cls, app_id: str) -> Optional[dict]:
         """

@@ -79,14 +79,15 @@ const translation = {
     char: 'символов',
   },
   actionMsg: {
-    noModification: 'На данный момент нет изменений.',
-    modifiedSuccessfully: 'Изменено успешно',
-    modifiedUnsuccessfully: 'Изменено неудачно',
-    copySuccessfully: 'Скопировано успешно',
+    noModification: 'В данный момент изменений нет',
+    modifiedSuccessfully: 'Успешно изменено',
+    modifiedUnsuccessfully: 'Не удалось изменить',
+    copySuccessfully: 'Успешно скопировано',
+    copyLinkSuccessfully: 'Ссылка скопирована в буфер обмена',
     paySucceeded: 'Оплата прошла успешно',
     payCancelled: 'Оплата отменена',
-    generatedSuccessfully: 'Сгенерировано успешно',
-    generatedUnsuccessfully: 'Сгенерировано неудачно',
+    generatedSuccessfully: 'Успешно сгенерировано',
+    generatedUnsuccessfully: 'Не удалось сгенерировать',
   },
   model: {
     params: {

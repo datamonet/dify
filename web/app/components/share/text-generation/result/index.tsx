@@ -24,6 +24,9 @@ import {
   getProcessedFilesFromResponse,
 } from '@/app/components/base/file-uploader/utils'
 
+import { updateUserCreditsWithTracing } from '@/app/api/pricing'
+import { useAppContext } from '@/context/app-context'
+
 export type IResultProps = {
   isWorkflow: boolean
   isCallBatchAPI: boolean
@@ -73,11 +76,13 @@ const Result: FC<IResultProps> = ({
   completionFiles,
   siteInfo,
 }) => {
+  const { userProfile, mutateUserProfile } = useAppContext()
+
   const [isResponding, { setTrue: setRespondingTrue, setFalse: setRespondingFalse }] = useBoolean(false)
   useEffect(() => {
     if (controlStopResponding)
       setRespondingFalse()
-  }, [controlStopResponding])
+  }, [controlStopResponding, setRespondingFalse])
 
   const [completionRes, doSetCompletionRes] = useState<any>('')
   const completionResRef = useRef<any>()
@@ -86,11 +91,11 @@ const Result: FC<IResultProps> = ({
     doSetCompletionRes(res)
   }
   const getCompletionRes = () => completionResRef.current
-  const [workflowProcessData, doSetWorkflowProcessData] = useState<WorkflowProcess>()
+  const [workflowProcessData, doSetWorkflowProccessData] = useState<WorkflowProcess>()
   const workflowProcessDataRef = useRef<WorkflowProcess>()
   const setWorkflowProcessData = (data: WorkflowProcess) => {
     workflowProcessDataRef.current = data
-    doSetWorkflowProcessData(data)
+    doSetWorkflowProccessData(data)
   }
   const getWorkflowProcessData = () => workflowProcessDataRef.current
 
@@ -271,7 +276,7 @@ const Result: FC<IResultProps> = ({
               }
             }))
           },
-          onWorkflowFinished: ({ data }) => {
+          onWorkflowFinished: async ({ data }) => {
             if (isTimeout) {
               notify({ type: 'warning', message: t('appDebug.warningMessage.timeoutExceeded') })
               return
@@ -306,6 +311,10 @@ const Result: FC<IResultProps> = ({
             setMessageId(tempMessageId)
             onCompleted(getCompletionRes(), taskId, true)
             isEnd = true
+            // console.log('workflowProcessData', workflowProcessData)
+            // takin command:需要将workflowProcessData赋值，方便传输到扣费函数中
+            await updateUserCreditsWithTracing(userProfile.takin_id!, workflowProcessData!.tracing!, workflowProcessData)
+            mutateUserProfile()
           },
           onTextChunk: (params) => {
             const { data: { text } } = params

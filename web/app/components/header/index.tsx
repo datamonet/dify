@@ -12,15 +12,14 @@ import DatasetNav from './dataset-nav'
 import EnvNav from './env-nav'
 import ExploreNav from './explore-nav'
 import ToolsNav from './tools-nav'
-import GithubStar from './github-star'
 import LicenseNav from './license-env'
 import { WorkspaceProvider } from '@/context/workspace-context'
 import AppContext, { useAppContext } from '@/context/app-context'
 import LogoSite from '@/app/components/base/logo/logo-site'
 import useBreakpoints, { MediaType } from '@/hooks/use-breakpoints'
 import { useProviderContext } from '@/context/provider-context'
+import Credits from '@/app/components/header/credits'
 import { useModalContext } from '@/context/modal-context'
-import { LicenseStatus } from '@/types/feature'
 
 const navClassName = `
   flex items-center relative mr-0 sm:mr-3 px-3 h-8 rounded-xl
@@ -59,18 +58,18 @@ const Header = () => {
           <Bars3Icon className="h-4 w-4 text-gray-500" />
         </div>}
         {!isMobile && <>
-          <Link href="/apps" className='flex items-center mr-4'>
-            <LogoSite className='object-contain' />
+          <Link href="https://app.takin.ai" className='flex items-center mr-4'>
+            <LogoSite />
           </Link>
-          {systemFeatures.license.status === LicenseStatus.NONE && <GithubStar />}
+          {/* {systemFeatures.license.status === LicenseStatus.NONE && <GithubStar />} */}
         </>}
       </div>
       {isMobile && (
         <div className='flex'>
-          <Link href="/apps" className='flex items-center mr-4'>
-            <LogoSite />
+          <Link href="https://app.takin.ai" className='flex items-center mr-4'>
+            <LogoSite className='object-contain' />
           </Link>
-          {systemFeatures.license.status === LicenseStatus.NONE && <GithubStar />}
+          {/* {systemFeatures.license.status === LicenseStatus.NONE && <GithubStar />} */}
         </div>
       )}
       {!isMobile && (
@@ -84,6 +83,8 @@ const Header = () => {
       <div className='flex items-center flex-shrink-0'>
         <LicenseNav />
         <EnvNav />
+        {/* takin commadnd: 积分 */}
+        <Credits /> 
         {enableBilling && (
           <div className='mr-3 select-none'>
             <HeaderBillingBtn onClick={handlePlanClick} />

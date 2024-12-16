@@ -105,6 +105,7 @@ export type IChatItem = {
 }
 
 export type Metadata = {
+  usage: any
   retriever_resources?: CitationItem[]
   annotation_reply: {
     id: string

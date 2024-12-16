@@ -59,7 +59,7 @@ export default function AccountSetting({
   const [activeMenu, setActiveMenu] = useState(activeTab)
   const { t } = useTranslation()
   const { enableBilling, enableReplaceWebAppLogo } = useProviderContext()
-  const { isCurrentWorkspaceDatasetOperator } = useAppContext()
+  const {userProfile,isCurrentWorkspaceDatasetOperator } = useAppContext()
 
   const workplaceGroupItems = (() => {
     if (isCurrentWorkspaceDatasetOperator)
@@ -112,6 +112,7 @@ export default function AccountSetting({
   const menuItems = [
     {
       key: 'workspace-group',
+      role: 'owner',
       name: t('common.settings.workplaceGroup'),
       items: workplaceGroupItems,
     },
@@ -142,7 +143,10 @@ export default function AccountSetting({
     }
   }, [])
 
-  const activeItem = [...menuItems[0].items, ...menuItems[1].items].find(item => item.key === activeMenu)
+  const activeItem: GroupItem | undefined = [
+    ...menuItems[0].items,
+    ...menuItems[1].items,
+  ].find(item => item.key === activeMenu)
 
   return (
     <Modal

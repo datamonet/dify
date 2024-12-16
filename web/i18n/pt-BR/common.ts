@@ -75,14 +75,15 @@ const translation = {
     char: 'caracteres',
   },
   actionMsg: {
-    noModification: 'Sem modificações no momento.',
+    noModification: 'Nenhuma modificação no momento',
     modifiedSuccessfully: 'Modificado com sucesso',
-    modifiedUnsuccessfully: 'Modificado sem sucesso',
+    modifiedUnsuccessfully: 'Falha na modificação',
     copySuccessfully: 'Copiado com sucesso',
-    paySucceeded: 'Pagamento realizado com sucesso',
+    copyLinkSuccessfully: 'Link copiado para a área de transferência',
+    paySucceeded: 'Pagamento bem-sucedido',
     payCancelled: 'Pagamento cancelado',
     generatedSuccessfully: 'Gerado com sucesso',
-    generatedUnsuccessfully: 'Geração sem sucesso',
+    generatedUnsuccessfully: 'Falha na geração',
   },
   model: {
     params: {
