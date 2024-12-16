@@ -52,6 +52,13 @@ def include_object(object, name, type_, reflected, compare_to):
         return True
 
 
+def include_name(name, type_, parent_names):
+    if type_ == "table":
+        # 忽略所有 embedding_vector_index 开头的表
+        return not name.startswith('embedding_vector_index_')
+    return True
+
+
 def run_migrations_offline():
     """Run migrations in 'offline' mode.
 
@@ -99,6 +106,7 @@ def run_migrations_online():
             target_metadata=get_metadata(),
             process_revision_directives=process_revision_directives,
             include_object=include_object,
+            include_name=include_name,
             **current_app.extensions['migrate'].configure_args
         )
 
@@ -110,4 +118,3 @@ if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
-
