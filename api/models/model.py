@@ -64,7 +64,7 @@ class App(db.Model):
     __table_args__ = (db.PrimaryKeyConstraint("id", name="app_pkey"), db.Index("app_tenant_id_idx", "tenant_id"))
 
     id = db.Column(StringUUID, server_default=db.text("uuid_generate_v4()"))
-    user_id = db.Column(StringUUID, nullable=False) # takin command: 增加用户ID
+    user_id = db.Column(StringUUID, nullable=False)  # takin command: 增加用户ID
     tenant_id: Mapped[str] = db.Column(StringUUID, nullable=False)
     name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=False, server_default=db.text("''::character varying"))

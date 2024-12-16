@@ -1,5 +1,5 @@
 from flask_login import current_user
-from flask_restful import Resource, fields, inputs, marshal, marshal_with, reqparse
+from flask_restful import Resource, fields, inputs, marshal_with, reqparse
 
 from constants.languages import languages
 from controllers.console import api
@@ -100,7 +100,6 @@ class RecommendedAppApi(Resource):
         """Delete app"""
         RecommendedAppService().delete_app(app_id)
         return {"result": "success"}, 204
-
 
 
 api.add_resource(RecommendedAppListApi, "/explore/apps")

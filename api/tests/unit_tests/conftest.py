@@ -12,7 +12,7 @@ PROJECT_DIR = os.path.abspath(os.path.join(ABS_PATH, os.pardir, os.pardir))
 CACHED_APP = Flask(__name__)
 
 
-@pytest.fixture
+@pytest.fixture()
 def app() -> Flask:
     return CACHED_APP
 

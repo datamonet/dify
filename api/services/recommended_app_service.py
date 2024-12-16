@@ -1,9 +1,12 @@
 from typing import Optional
+
 from flask_sqlalchemy.pagination import Pagination
+
 from configs import dify_config
-from services.recommend_app.recommend_app_factory import RecommendAppRetrievalFactory
-from models.model import Account, App, RecommendedApp
 from extensions.ext_database import collection, db
+from models.model import Account, App, RecommendedApp
+from services.recommend_app.recommend_app_factory import RecommendAppRetrievalFactory
+
 
 class RecommendedAppService:
     @classmethod

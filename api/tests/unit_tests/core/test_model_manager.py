@@ -9,7 +9,7 @@ from core.model_runtime.entities.model_entities import ModelType
 from extensions.ext_redis import redis_client
 
 
-@pytest.fixture
+@pytest.fixture()
 def lb_model_manager():
     load_balancing_configs = [
         ModelLoadBalancingConfiguration(id="id1", name="__inherit__", credentials={}),

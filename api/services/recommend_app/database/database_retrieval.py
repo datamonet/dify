@@ -90,6 +90,7 @@ class DatabaseRecommendAppRetrieval(RecommendAppRetrievalBase):
             "community": community_apps_result,
             "categories": sorted(categories),
         }
+
     @classmethod
     def fetch_recommended_app_detail_from_db(cls, app_id: str) -> Optional[dict]:
         """

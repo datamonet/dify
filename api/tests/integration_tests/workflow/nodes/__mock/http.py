@@ -45,7 +45,7 @@ class MockedHttp:
         return response
 
 
-@pytest.fixture
+@pytest.fixture()
 def setup_http_mock(request, monkeypatch: MonkeyPatch):
     if not MOCK:
         yield

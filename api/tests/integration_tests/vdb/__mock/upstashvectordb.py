@@ -59,7 +59,7 @@ class AttrDict(UserDict):
 MOCK = os.getenv("MOCK_SWITCH", "false").lower() == "true"
 
 
-@pytest.fixture
+@pytest.fixture()
 def setup_upstashvector_mock(request, monkeypatch: MonkeyPatch):
     if MOCK:
         monkeypatch.setattr(Index, "__init__", MockIndex.__init__)
