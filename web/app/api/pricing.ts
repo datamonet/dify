@@ -83,7 +83,7 @@ export async function updateUserCreditsWithUSD(userId: string, USD: number, type
  * @returns totalCost额外工具的扣费
  */
 export async function updateUSDWithAgentTool(responseItem: ChatItem, agentTools: ToolItem[]) {
-  console.log('responseItem', responseItem)
+  // console.log('responseItem', responseItem)
   const tools = responseItem.agent_thoughts?.map(thought => thought.tool)
   // 根据用户生成的图片数量进行扣费
   const messageFilesMap = (responseItem.agent_thoughts || []).reduce((map, thought) => {
