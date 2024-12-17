@@ -51,7 +51,7 @@ const getKey = (
   if (!pageIndex || previousPageData.has_more) {
     const params: any = {
       url: 'apps',
-      params: { page: pageIndex + 1, limit: 30, name: keywords },
+      params: { page: pageIndex + 1, limit: 10, name: keywords },
     }
 
     params.params.tag_ids = tags
@@ -71,7 +71,7 @@ const getExploreKey = (
       url: 'explore/apps',
       params: {
         page: pageIndex + 1,
-        limit: 30,
+        limit: 10,
         mode: lowerCase(mode),
         name: keywords,
       },
