@@ -29,7 +29,11 @@ import {
   getProcessedFilesFromResponse,
 } from '@/app/components/base/file-uploader/utils'
 
+// takin command:扣费
+import { updateUserCreditsWithTracing } from '@/app/api/pricing'
+import { useAppContext } from '@/context/app-context'
 export const useWorkflowRun = () => {
+  const { userProfile, mutateUserProfile } = useAppContext()
   const store = useStoreApi()
   const workflowStore = useWorkflowStore()
   const reactflow = useReactFlow()
@@ -200,7 +204,7 @@ export const useWorkflowRun = () => {
           if (onWorkflowStarted)
             onWorkflowStarted(params)
         },
-        onWorkflowFinished: (params) => {
+        onWorkflowFinished: async (params) => {
           const { data } = params
           const {
             workflowRunningData,
@@ -209,7 +213,7 @@ export const useWorkflowRun = () => {
 
           const isStringOutput = data.outputs && Object.keys(data.outputs).length === 1 && typeof data.outputs[Object.keys(data.outputs)[0]] === 'string'
 
-          setWorkflowRunningData(produce(workflowRunningData!, (draft) => {
+          const newWorkflowRunningData = (produce(workflowRunningData!, (draft) => {
             draft.result = {
               ...draft.result,
               ...data,
@@ -220,11 +224,17 @@ export const useWorkflowRun = () => {
               draft.resultText = data.outputs[Object.keys(data.outputs)[0]]
             }
           }))
+          setWorkflowRunningData(newWorkflowRunningData)
 
           prevNodeId = ''
 
           if (onWorkflowFinished)
             onWorkflowFinished(params)
+          // takin command:需要将newWorkflowRunningData赋值，方便传输到扣费函数中
+          // console.log('newWorkflowRunningData', newWorkflowRunningData)
+          // await updateUserCreditsWithTotalToken(userProfile.takin_id!, newWorkflowRunningData.result.total_tokens || 0, 'Dify Workflow', newWorkflowRunningData)
+          await updateUserCreditsWithTracing(userProfile.takin_id!, newWorkflowRunningData.tracing!, newWorkflowRunningData)
+          mutateUserProfile()
         },
         onError: (params) => {
           const {
