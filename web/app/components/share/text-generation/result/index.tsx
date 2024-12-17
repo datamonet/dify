@@ -76,7 +76,7 @@ const Result: FC<IResultProps> = ({
   completionFiles,
   siteInfo,
 }) => {
-  const { userProfile, mutateUserProfile } = useAppContext()
+  const { userProfile, updateCreditsWithoutRerender } = useAppContext()
 
   const [isResponding, { setTrue: setRespondingTrue, setFalse: setRespondingFalse }] = useBoolean(false)
   useEffect(() => {
@@ -313,8 +313,9 @@ const Result: FC<IResultProps> = ({
             isEnd = true
             // console.log('workflowProcessData', workflowProcessData)
             // takin command:需要将workflowProcessData赋值，方便传输到扣费函数中
-            await updateUserCreditsWithTracing(userProfile.takin_id!, workflowProcessData!.tracing!, workflowProcessData)
-            mutateUserProfile()
+            const cost = await updateUserCreditsWithTracing(userProfile.takin_id!, workflowProcessData!.tracing!, workflowProcessData)
+            const newCredits = parseFloat(((userProfile?.credits || 0) - cost).toFixed(2))
+            updateCreditsWithoutRerender(newCredits)
           },
           onTextChunk: (params) => {
             const { data: { text } } = params

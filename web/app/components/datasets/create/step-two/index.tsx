@@ -116,7 +116,7 @@ const StepTwo = ({
   const { locale } = useContext(I18n)
   const media = useBreakpoints()
   const isMobile = media === MediaType.mobile
-  const { userProfile, mutateUserProfile } = useContext(AppContext)
+  const { userProfile, updateCreditsWithoutRerender } = useContext(AppContext)
   const { dataset: currentDataset, mutateDatasetRes } = useDatasetDetailContext()
   const isInCreatePage = !datasetId || (datasetId && !currentDataset?.data_source_type)
   const dataSourceType = isInCreatePage ? inCreatePageDataSourceType : currentDataset?.data_source_type
@@ -514,7 +514,8 @@ const StepTwo = ({
         'Dify Documents',
         { dataset_id: datasetId },
       )
-      mutateUserProfile()
+      const newCredits = parseFloat(((userProfile?.credits || 0) - cost).toFixed(2))
+      updateCreditsWithoutRerender(newCredits)
     }
     catch (err) {
       Toast.notify({

@@ -23,6 +23,7 @@ export type AppContextValue = {
   mutateApps: VoidFunction
   userProfile: UserProfileResponse
   mutateUserProfile: VoidFunction
+  updateCreditsWithoutRerender: (newCredits: number) => void
   currentWorkspace: ICurrentWorkspace
   isCurrentWorkspaceManager: boolean
   isCurrentWorkspaceOwner: boolean
@@ -68,6 +69,7 @@ const AppContext = createContext<AppContextValue>({
     avatar: '',
     is_password_set: false,
   },
+  updateCreditsWithoutRerender: () => { },
   currentWorkspace: initialWorkspaceInfo,
   isCurrentWorkspaceManager: false,
   isCurrentWorkspaceOwner: false,
@@ -90,6 +92,7 @@ export type AppContextProviderProps = {
 
 export const AppContextProvider: FC<AppContextProviderProps> = ({ children }) => {
   const pageContainerRef = useRef<HTMLDivElement>(null)
+  const creditsRef = useRef<number>(0)
 
   const { data: appList, mutate: mutateApps } = useSWR({ url: '/apps', params: { page: 1, limit: 30, name: '' } }, fetchAppList)
   const { data: userProfileResponse, mutate: mutateUserProfile } = useSWR({ url: '/account/profile', params: {} }, fetchUserProfile)
@@ -142,6 +145,15 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({ children }) =>
     globalThis.document.documentElement.setAttribute('data-theme', theme)
   }, [])
 
+  const updateCreditsWithoutRerender = useCallback((newCredits: number) => {
+    creditsRef.current = newCredits
+    const creditsElements = document.querySelectorAll('[data-credits-display]')
+    creditsElements.forEach((element) => {
+      if (element instanceof HTMLElement)
+        element.textContent = newCredits.toString()
+    })
+  }, [])
+
   useEffect(() => {
     globalThis.document.documentElement.setAttribute('data-theme', theme)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -159,6 +171,7 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({ children }) =>
       mutateApps,
       userProfile,
       mutateUserProfile,
+      updateCreditsWithoutRerender,
       pageContainerRef,
       langeniusVersionInfo,
       useSelector,
