@@ -54,7 +54,7 @@ def include_object(object, name, type_, reflected, compare_to):
 
 def include_name(name, type_, parent_names):
     if type_ == "table":
-        # 忽略所有 embedding_vector_index 开头的表
+        # takin command:忽略所有 embedding_vector_index 开头的表
         return not name.startswith('embedding_vector_index_')
     return True
 

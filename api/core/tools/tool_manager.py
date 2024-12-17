@@ -494,7 +494,7 @@ class ToolManager:
         if "api" in filters:
             db_api_providers: list[ApiToolProvider] = (
                 db.session.query(ApiToolProvider)
-                .filter((ApiToolProvider.user_id == user_id) | (ApiToolProvider.publish == True)) # takin command:修改了api tool可见范围
+                .filter((ApiToolProvider.user_id == user_id) | (ApiToolProvider.publish == True))  # takin command:修改了api tool可见范围
                 .all()
             )
 

@@ -62,7 +62,7 @@ class PGVector(BaseVector):
     def __init__(self, collection_name: str, config: PGVectorConfig):
         super().__init__(collection_name)
         self.pool = self._create_connection_pool(config)
-        self.table_name = f"embedding_{collection_name}"
+        self.table_name = f"embedding_{collection_name}"  # takin command： PGVector 类中，实际创建表时会加上 "embedding_" 前缀：
 
     def get_type(self) -> str:
         return VectorType.PGVECTOR
