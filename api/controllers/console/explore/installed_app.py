@@ -1,5 +1,6 @@
 from datetime import UTC, datetime
 
+from flask import request
 from flask_login import current_user
 from flask_restful import Resource, inputs, marshal_with, reqparse
 from sqlalchemy import and_
@@ -20,6 +21,7 @@ class InstalledAppsListApi(Resource):
     @account_initialization_required
     @marshal_with(installed_app_list_fields)
     def get(self):
+        app_id = request.args.get("app_id", default=None, type=str)
         current_tenant_id = current_user.current_tenant_id
         current_user_id = current_user.id
         # installed_apps = db.session.query(InstalledApp).filter(
@@ -27,15 +29,15 @@ class InstalledAppsListApi(Resource):
         # ).all()
 
         # takin command：适配Takin，需要进行用户id的过滤，达到数据隔离的效果。直接使用 join连表查询app的user id
-        installed_apps = (
-            db.session.query(InstalledApp)
-            .join(App, InstalledApp.app_id == App.id)
-            .filter(
-                InstalledApp.tenant_id == current_tenant_id,
-                App.user_id == current_user_id,  # current_user_id 是要过滤的用户 ID
+
+        if app_id:
+            installed_apps = (
+                db.session.query(InstalledApp)
+                .filter(and_(InstalledApp.tenant_id == current_tenant_id, InstalledApp.app_id == app_id, App.user_id == current_user_id))
+                .all()
             )
-            .all()
-        )
+        else:
+            installed_apps = db.session.query(InstalledApp).filter(InstalledApp.tenant_id == current_tenant_id, App.user_id == current_user_id).all()
 
         current_user.role = TenantService.get_user_role(current_user, current_user.current_tenant)
         installed_apps = [

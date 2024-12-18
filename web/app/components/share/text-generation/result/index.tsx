@@ -21,7 +21,7 @@ import { sleep } from '@/utils'
 import type { SiteInfo } from '@/models/share'
 import { TEXT_GENERATION_TIMEOUT_MS } from '@/config'
 import {
-  getProcessedFilesFromResponse,
+  getFilesInLogs,
 } from '@/app/components/base/file-uploader/utils'
 
 import { updateUserCreditsWithTracing } from '@/app/api/pricing'
@@ -293,7 +293,7 @@ const Result: FC<IResultProps> = ({
             }
             setWorkflowProcessData(produce(getWorkflowProcessData()!, (draft) => {
               draft.status = WorkflowRunningStatus.Succeeded
-              draft.files = getProcessedFilesFromResponse(data.files || [])
+              draft.files = getFilesInLogs(data.outputs || []) as any[]
             }))
             if (!data.outputs) {
               setCompletionRes('')
