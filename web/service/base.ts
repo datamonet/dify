@@ -125,22 +125,21 @@ function requiredWebSSOLogin() {
 }
 
 function getAccessToken(isPublicAPI?: boolean) {
-  // takin command:测试
-  // if (isPublicAPI) {
-  //   const sharedToken = globalThis.location.pathname.split('/').slice(-1)[0]
-  //   const accessToken = localStorage.getItem('token') || JSON.stringify({ [sharedToken]: '' })
-  //   let accessTokenJson = { [sharedToken]: '' }
-  //   try {
-  //     accessTokenJson = JSON.parse(accessToken)
-  //   }
-  //   catch (e) {
+  if (isPublicAPI) {
+    const sharedToken = globalThis.location.pathname.split('/').slice(-1)[0]
+    const accessToken = localStorage.getItem('token') || JSON.stringify({ [sharedToken]: '' })
+    let accessTokenJson = { [sharedToken]: '' }
+    try {
+      accessTokenJson = JSON.parse(accessToken)
+    }
+    catch (e) {
 
-  //   }
-  //   return accessTokenJson[sharedToken]
-  // }
-  // else {
-  return localStorage.getItem('console_token') || ''
-  // }
+    }
+    return accessTokenJson[sharedToken]
+  }
+  else {
+    return localStorage.getItem('console_token') || ''
+  }
 }
 
 export function format(text: string) {
