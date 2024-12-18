@@ -17,7 +17,7 @@ import Category from '@/app/components/explore/category'
 import AppCard from '@/app/components/explore/app-card'
 import StudioAppCard from '@/app/(commonLayout)/apps/AppCard'
 import { fetchAppDetail, fetchExploreAppList } from '@/service/explore'
-import { fetchAppList as appList, importApp } from '@/service/apps'
+import { fetchAppList as appList, importDSL } from '@/service/apps'
 import { useTabSearchParams } from '@/hooks/use-tab-searchparams'
 import CreateAppModal from '@/app/components/explore/create-app-modal'
 import AppTypeSelector from '@/app/components/app/type-selector'
@@ -26,6 +26,7 @@ import Loading from '@/app/components/base/loading'
 import { NEED_REFRESH_APP_LIST_KEY } from '@/config'
 import { useAppContext } from '@/context/app-context'
 import { getRedirection } from '@/utils/app-redirection'
+import { DSLImportMode } from '@/models/app'
 // takin command:增加share 卡片
 import Modal from '@/app/components/base/modal'
 import ShareAppCard from '@/app/components/explore/share-app-card'
@@ -175,8 +176,9 @@ const Apps = ({ pageType = PageType.EXPLORE, onSuccess }: AppsProps) => {
   }) => {
     const { export_data } = await fetchAppDetail(currApp?.id as string)
     try {
-      const app = await importApp({
-        data: export_data,
+      const app = await importDSL({
+        mode: DSLImportMode.YAML_CONTENT,
+        yaml_content: export_data,
         name,
         icon_type,
         icon,
