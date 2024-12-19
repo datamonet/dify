@@ -1,5 +1,6 @@
 'use server'
 import { cookies } from 'next/headers'
+import { ServerClient } from 'postmark'
 import clientPromise from '@/service/mongo'
 
 type MongoUser = {
@@ -38,3 +39,6 @@ export async function deleteCookie(name: string) {
 export async function getCookie(name: string) {
   return cookies().get(name)?.value
 }
+
+// takin command:添加postmark
+export const EmailClient = new ServerClient(process.env.NEXT_PUBLIC_POSTMARK_API_KEY!)
