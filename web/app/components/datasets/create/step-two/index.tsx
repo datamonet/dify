@@ -10,7 +10,6 @@ import {
 } from '@remixicon/react'
 import Link from 'next/link'
 import { groupBy } from 'lodash-es'
-import { ServerClient } from 'postmark'
 import PreviewItem, { PreviewType } from './preview-item'
 import LanguageSelect from './language-select'
 import s from './index.module.css'
@@ -55,9 +54,6 @@ import { ModelTypeEnum } from '@/app/components/header/account-setting/model-pro
 import { Globe01 } from '@/app/components/base/icons/src/vender/line/mapsAndTravel'
 import { updateUserCreditsWithUSD } from '@/app/api/pricing'
 import AppContext from '@/context/app-context'
-
-// takin command:添加postmark
-const EmailClient = new ServerClient(process.env.NEXT_PUBLIC_POSTMARK_API_KEY!)
 
 type ValueOf<T> = T[keyof T]
 type StepTwoProps = {
@@ -500,12 +496,7 @@ const StepTwo = ({
       }
       catch (err) {
         cost = 1
-        await EmailClient.sendEmail({
-          From: 'support@takin.ai',
-          To: 'curator@takin.ai,support@takin.ai,faye_1225@163.com',
-          Subject: 'Dify Error: Upload File',
-          HtmlBody: JSON.stringify(err),
-        })
+        console.error(err)
       }
       // takin command:文件上传更新积分，扣费
       await updateUserCreditsWithUSD(
