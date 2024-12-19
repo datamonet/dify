@@ -103,6 +103,7 @@ x-shared-env: &shared-api-worker-env
   RETRIEVAL_TOP_N: ${RETRIEVAL_TOP_N:-0}
   MONGODB_URI: ${MONGODB_URI:-}
   MONGODB_NAME: ${MONGODB_NAME:-}
+  POSTMARK_API_KEY: ${POSTMARK_API_KEY:-}
 services:
   # API service
   api:
@@ -147,8 +148,7 @@ services:
       SENTRY_DSN: ${WEB_SENTRY_DSN:-}
       MONGODB_URI: ${MONGODB_URI:-}
       MONGODB_NAME: ${MONGODB_NAME:-}
-      EMAIL_ACCESS_KEY_ID: ${EMAIL_SECRET_ACCESS_KEY:-}
-      EMAIL_SECRET_ACCESS_KEY: ${EMAIL_SECRET_ACCESS_KEY:-}
+      NEXT_PUBLIC_POSTMARK_API_KEY: ${POSTMARK_API_KEY:-}
   # The DifySandbox
   sandbox:
     image: langgenius/dify-sandbox:0.2.10
