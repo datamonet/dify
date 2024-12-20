@@ -488,7 +488,7 @@ const StepTwo = ({
       let cost = estimateTokes?.total_price || 0
       try {
         const response = await fetchIndexingEstimateBatch({
-          datasetId: res.dataset?.id || '',
+          datasetId: (datasetId || res.dataset?.id) || '',
           batchId: res.batch,
         })
         if (response)
