@@ -67,19 +67,19 @@ const getExploreKey = (
   mode: string,
   keywords: string,
 ) => {
-  if (!pageIndex || previousPageData.has_more) {
-    const params: any = {
-      url: 'explore/apps',
-      params: {
-        page: pageIndex + 1,
-        limit: 10,
-        mode: lowerCase(mode),
-        name: keywords,
-      },
-    }
-    return params
+  if (previousPageData && previousPageData.total <= (pageIndex) * previousPageData.limit)
+    return null
+
+  const params: any = {
+    url: 'explore/apps',
+    params: {
+      page: pageIndex + 1,
+      limit: 10,
+      mode: lowerCase(mode),
+      name: keywords,
+    },
   }
-  return null
+  return params
 }
 
 const Apps = ({ pageType = PageType.EXPLORE, onSuccess }: AppsProps) => {
@@ -109,7 +109,7 @@ const Apps = ({ pageType = PageType.EXPLORE, onSuccess }: AppsProps) => {
   }
   const anchorRef = useRef<HTMLDivElement>(null)
 
-  const [currentType, setCurrentType] = useState<string>('')
+  const [currentType, setCurrentType] = useState<any>('')
   const [currCategory, setCurrCategory] = useTabSearchParams({
     defaultTab: 'recommended',
     disableSearchParams: pageType !== PageType.EXPLORE,
