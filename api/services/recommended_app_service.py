@@ -70,6 +70,7 @@ class RecommendedAppService:
 
         # 返回带有分页和合并后的数据
         response_data = {
+            "has_more": bool(recommended_apps.has_next),
             "items": recommended_apps.items,
             "total": recommended_apps.total,
             "page": recommended_apps.page,
