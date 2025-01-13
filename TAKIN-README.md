@@ -34,28 +34,98 @@ This document lists all files that have been modified by Takin, organized by fun
 ## Account Management
 - `api/services/account_service.py`: Added email-based user queries and Takin-specific queries
 
+## Frontend Changes
+
+### Base Components and Services
+- `web/service/base.ts`: Base service modifications
+- `web/service/explore.ts`: Added community features and recommendation functionality
+- `web/next.config.js`: Adjusted body size limit configuration
+- `web/models/common.ts`: Added Takin-specific user fields (takin_id, credits, role)
+- `web/models/explore.ts`: Added username display functionality
+
+### Billing and Credits System
+- `web/app/api/pricing.ts`: Core billing logic implementation
+  - Credit system (subscription_credits and extra_credits)
+  - USD to credits conversion with Takin coefficient
+  - Agent tool usage billing
+  - Workflow tracing and consumption tracking
+- `web/app/components/billing/credits-billing-modal/index.tsx`: Credits billing UI
+- `web/app/components/header/credits/index.tsx`: Credits display in header
+- `web/app/api/user.ts`: User cookie handling for Takin domain
+
+### Authentication and User Management
+- `web/app/account/avatar.tsx`: Added Takin logout redirect
+- `web/app/signin/_header.tsx`: Integrated Takin logo
+- `web/app/components/header/account-dropdown/index.tsx`: Added language switcher and logout handling
+- `web/app/components/swr-initor-takin.tsx`: Authentication flow handling
+- `web/app/signin/page.tsx`: Sign-in page integration
+- `web/app/components/header/index.tsx`: Navigation and Takin links
+
+### App and Workflow Features
+- `web/app/components/app/app-publisher/index.tsx`: Added app public status management
+- `web/app/components/workflow/hooks/use-workflow-run.ts`: Added billing integration
+- `web/app/components/share/text-generation/result/index.tsx`: Added workflow process data handling
+- `web/context/app-context.tsx`: Added user ID handling for billing and profile navigation
+
+### Chat and UI Components
+- `web/app/components/base/chat/chat/hooks.ts`: Integrated billing module and credit tracking
+- `web/app/components/base/toast/index.tsx`: UI improvements for error notifications
+- `web/app/components/base/tag-management/favourite.tsx`: Added app favoriting functionality
+
+### Dataset Management
+- `web/app/components/datasets/create/step-two/index.tsx`: Added QA calculation and file upload billing
+- `web/app/(commonLayout)/datasets/Container.tsx`: Modified API page visibility
+
+### Explore Features
+- `web/app/components/explore/app-card/index.tsx`: Added internationalization
+- `web/app/components/explore/takin-list/index.tsx`: Added share card functionality
+- `web/app/components/explore/sidebar/index.tsx`: Added loading states
+
 ## Summary of Changes
 
-Total number of files modified: 20 files
+Total number of files modified: 43 files (20 Python files, 23 TypeScript/JavaScript files)
 
 Changes by area:
-1. **User Data Isolation** (4 files)
-   - Core model and service files for handling user-specific data separation
+1. **Frontend Changes** (23 files)
+   - Base components and services modifications
+   - Billing and credits system implementation
+   - Authentication and user management
+   - App and workflow features
+   - Chat and UI components
+   - Dataset management
+   - Explore features integration
+   - Focus on billing integration, UI/UX improvements, and internationalization
 
 2. **Tools and Workflow Management** (6 files)
-   - Focused on tool visibility, permissions, and billing integration
-   - Includes DALL-E and web scraper modifications
+   - Tool visibility and permissions
+   - Billing integration
+   - DALL-E and web scraper modifications
 
-3. **Recommended Apps System** (3 files)
-   - Handling app recommendations, pagination, and role-based filtering
+3. **User Data Isolation** (4 files)
+   - Core model and service files
+   - User-specific data separation
 
-4. **Database and Infrastructure** (3 files)
-   - Database connections and vector storage optimizations
+4. **Recommended Apps System** (3 files)
+   - App recommendations
+   - Pagination support
+   - Role-based filtering
 
-5. **Explore Features** (3 files)
-   - Billing tracking and agent mode configurations
+5. **Database and Infrastructure** (3 files)
+   - Database connections
+   - Vector storage optimizations
 
-6. **Account Management** (1 file)
+6. **Explore Features** (3 files)
+   - Billing tracking
+   - Agent mode configurations
+
+7. **Account Management** (1 file)
    - User query and authentication updates
 
-The most significant changes were implemented in Tools and Workflow Management (6 files) and User Data Isolation (4 files), indicating these were primary focus areas for Takin's modifications. The changes predominantly centered around enhancing user-specific features, implementing billing integration, and strengthening data isolation.
+Key Themes Across Changes:
+1. **Billing Integration**: Comprehensive implementation across frontend and backend for tracking and managing user credits
+2. **User Experience**: Enhanced UI components, internationalization, and improved error handling
+3. **Data Isolation**: Strengthened user-specific data handling and permissions
+4. **Community Features**: Added sharing, favoriting, and public app management capabilities
+5. **Infrastructure**: Optimized database connections and vector storage
+
+The most significant changes were in the Frontend (23 files) and Tools and Workflow Management (6 files) areas, with a strong focus on billing integration, user experience improvements, and data isolation.
