@@ -532,11 +532,24 @@ class WorkflowCycleManage:
         # extras logic
         if event.node_type == NodeType.TOOL:
             node_data = cast(ToolNodeData, event.node_data)
+            # Get tool icon
             response.data.extras["icon"] = ToolManager.get_tool_icon(
                 tenant_id=self._application_generate_entity.app_config.tenant_id,
                 provider_type=node_data.provider_type,
                 provider_id=node_data.provider_id,
             )
+            
+            # Takin command: 为了准确的区分工具的名称,Get tool runtime to access identity information
+            tool_runtime = ToolManager.get_workflow_tool_runtime(
+                tenant_id=self._application_generate_entity.app_config.tenant_id,
+                app_id=self._application_generate_entity.app_config.app_id,
+                node_id=workflow_node_execution.node_id,
+                workflow_tool=node_data,
+                invoke_from=self.invoke_from,
+            )
+            # Add tool name and label to extras
+            response.data.extras["tool_name"] = node_data.tool_name
+            response.data.extras["tool_label"] = tool_runtime.identity.label
 
         return response
 
