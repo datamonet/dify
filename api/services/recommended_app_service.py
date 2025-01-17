@@ -3,7 +3,7 @@ from typing import Optional
 from flask_sqlalchemy.pagination import Pagination
 
 from configs import dify_config
-from extensions.ext_database import collection, db
+from extensions.ext_database import postgres_session, db
 from models.model import Account, App, RecommendedApp
 from services.recommend_app.recommend_app_factory import RecommendAppRetrievalFactory
 
@@ -52,16 +52,20 @@ class RecommendedAppService:
             account.email: account.email for account in accounts_cursor
         }
 
-        # MongoDB 查询用户名称
+        # PostgreSQL查询用户名称
         emails = list(email_to_name.keys())  # 提取所有的 email
-        users_cursor = collection.find({"email": {"$in": emails}}, {"_id": 0, "name": 1, "email": 1})
+        users_cursor = postgres_session.execute(
+            "SELECT name, email FROM users WHERE email = ANY(:emails)",
+            {"emails": emails}
+        ).fetchall()
+        
         # 使用 email 获取用户名，如果没有 name 字段，则使用 email 中 @ 之前的部分
         email_to_name.update({
-            user.get('email'): user.get('name', user.get('email').split('@')[0])
-            for user in users_cursor if user.get('email')
+            user.email: user.name or user.email.split('@')[0]
+            for user in users_cursor if user.email
         })
 
-        # 将 MongoDB 中的用户名称嵌入到推荐应用数据中
+        # 将用户名称嵌入到推荐应用数据中
         for app in recommended_apps.items:
             # 获取 app 的 email 通过 user_id
             email = next((account.email for account in accounts_cursor if account.id == app.app.user_id), None)

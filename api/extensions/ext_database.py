@@ -21,11 +21,16 @@ def init_app(app: DifyApp):
 # takin command:链接数据库
 
 
-import os
 
+
+import os
 import dotenv
-from pymongo import MongoClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 dotenv.load_dotenv()
 
-collection = MongoClient(os.getenv("MONGODB_URI"), connect=False)[os.getenv("MONGODB_NAME")]["users"]
+# Create a separate PostgreSQL connection
+postgres_engine = create_engine(os.getenv("POSTGRES_URI"))
+PostgresSession = sessionmaker(bind=postgres_engine)
+postgres_session = PostgresSession()
