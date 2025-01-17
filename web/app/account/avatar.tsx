@@ -29,7 +29,7 @@ export default function AppSelector() {
 
     // router.push('/signin')
     // takin command: 退出登录后跳转takin
-    router.push('https://takin.ai/auth/signin?callbackUrl=https%3A%2F%2Fdify.takin.ai%2Fapps')
+    router.push('https://test.takin.ai/signin?callbackUrl=https%3A%2F%2Fdify.takin.ai%2Fapps')
   }
 
   return (
