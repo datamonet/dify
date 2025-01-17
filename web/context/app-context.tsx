@@ -117,7 +117,6 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({ children }) =>
       // get user info from takin
       // takin command:后续的扣费、跳转个人详情需要用到takin的user id
       const takinUserInfo = await getUserInfo(result.email)
-      console.log('takinUserInfo',takinUserInfo)
       setUserProfile({
         ...result,
         role: takinUserInfo?.role,
