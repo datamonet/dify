@@ -52,7 +52,7 @@ import ModelSelector from '@/app/components/header/account-setting/model-provide
 import type { DefaultModel } from '@/app/components/header/account-setting/model-provider-page/declarations'
 import { ModelTypeEnum } from '@/app/components/header/account-setting/model-provider-page/declarations'
 import { Globe01 } from '@/app/components/base/icons/src/vender/line/mapsAndTravel'
-import { updateUserCreditsWithUSD } from '@/app/api/pricing'
+import { updateCreditsByKnowledge } from '@/app/api/pricing'
 import AppContext from '@/context/app-context'
 
 type ValueOf<T> = T[keyof T]
@@ -499,11 +499,13 @@ const StepTwo = ({
         console.error(err)
       }
       // takin command:文件上传更新积分，扣费
-      await updateUserCreditsWithUSD(
-        userProfile.takin_id!,
-        cost,
-        'Dify Documents',
-        { dataset_id: datasetId },
+      await updateCreditsByKnowledge(
+        {
+          usage: cost,
+          userId: userProfile.takin_id!,
+          reason: 'Dify Documents',
+          source: { dataset_id: datasetId },
+        },
       )
       const newCredits = parseFloat(((userProfile?.credits || 0) - cost).toFixed(2))
       updateCreditsWithoutRerender(newCredits)

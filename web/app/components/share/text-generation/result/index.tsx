@@ -24,7 +24,7 @@ import {
   getFilesInLogs,
 } from '@/app/components/base/file-uploader/utils'
 
-import { updateUserCreditsWithTracing } from '@/app/api/pricing'
+import { updateCreditsByWorkflow } from '@/app/api/pricing'
 import { useAppContext } from '@/context/app-context'
 
 export type IResultProps = {
@@ -313,7 +313,11 @@ const Result: FC<IResultProps> = ({
             isEnd = true
             // console.log('workflowProcessData', workflowProcessData)
             // takin command:需要将workflowProcessData赋值，方便传输到扣费函数中
-            const cost = await updateUserCreditsWithTracing(userProfile.takin_id!, workflowProcessData!.tracing!, workflowProcessData)
+            const cost = await updateCreditsByWorkflow({
+              tracing: workflowProcessData!.tracing!,
+              userId: userProfile.takin_id!,
+            })
+
             const newCredits = parseFloat(((userProfile?.credits || 0) - cost).toFixed(2))
             updateCreditsWithoutRerender(newCredits)
           },

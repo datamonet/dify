@@ -31,10 +31,10 @@ const SwrInitor = ({
 
   useEffect(() => {
     const checkAuth = async () => {
-      // const token = await getCookie('next-auth.session-token')
-      const token = await getCookie('__Secure-next-auth.session-token')
+      const token = await getCookie('__Secure-authjs.session-token')
+      // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZmF5ZSIsImVtYWlsIjoiZmF5ZV8xMjI1QDE2My5jb20iLCJpYXQiOjE3MjI5Mzc1Nzh9.vGrYPMBZ5D6VE_Jus2C8Icp21NTn9yJ6IbBr95WrDYY'
       if (!token) {
-        router.replace('https://takin.ai/auth/signin?callbackUrl=https%3A%2F%2Fdify.takin.ai%2Fapps')
+        router.replace('https://test.takin.ai/auth/signin')
         return
       }
 

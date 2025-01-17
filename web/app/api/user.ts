@@ -1,28 +1,52 @@
 'use server'
 import { cookies } from 'next/headers'
-import clientPromise from '@/service/mongo'
+import { PrismaClient } from '@prisma/client'
 
-type MongoUser = {
-  _id: string
+const prisma = new PrismaClient()
+
+type User = {
+  id: string
   name: string
   email: string
-  avatar: string
-  credits: number
+  image: string
   role: number
+  level: number
+  credits: number
 } | null
 
 /**
- * 获取用户信息
+ * Get user information
  * @param email
  */
 export async function getUserInfo(email: string) {
-  const userCollection = (await clientPromise)
-    .db(process.env.MONGODB_NAME)
-    .collection('users')
+  try {
+    const user = await prisma.user.findFirst({
+      where: { email },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        role: true,
+        level: true,
+        subscription_credits: true,
+        extra_credits: true,
+        subscription_purchased_credits: true,
+      },
+    })
 
-  const user = await userCollection.findOne({ email })
+    if (!user)
+      return null
 
-  return (user ? { ...user, _id: user._id.toString(), credits: (user.subscription_credits || 0) + (user.extra_credits || 0) } : user) as MongoUser
+    return {
+      ...user,
+      credits: (user.subscription_credits || 0) + (user.extra_credits || 0),
+    } as User
+  }
+  catch (error) {
+    console.error('Error fetching user:', error)
+    throw error
+  }
 }
 
 export async function deleteCookie(name: string) {

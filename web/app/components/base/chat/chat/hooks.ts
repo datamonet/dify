@@ -33,7 +33,7 @@ import {
 } from '@/app/components/base/file-uploader/utils'
 // takin command:导入扣费模块
 import { useAppContext } from '@/context/app-context'
-import { updateUSDWithAgentTool, updateUserCreditsWithUSD } from '@/app/api/pricing'
+import { updateCreditsByAgent } from '@/app/api/pricing'
 
 type GetAbortController = (abortController: AbortController) => void
 type SendCallback = {
@@ -438,9 +438,15 @@ export const useChat = (
             })
           handleUpdateChatList(newListWithAnswer)
           // takin command:导入扣费模块。
-          const toolsCost = await updateUSDWithAgentTool(responseItem, config?.agent_mode?.tools || [])
-          // takin command:导入扣费模块。更新用户积分,并且在bill表中记录消费, userId 用户的mongo id, USD 消耗的总金额，单位为美元（包括了输入输出的Token）, type 消费类型, metadata 消费的元数据
-          const cost = await updateUserCreditsWithUSD(userProfile.takin_id!, parseFloat(messageEnd.metadata?.usage.total_price) + toolsCost, isAgentMode ? 'Dify Agent' : 'Dify Chat', messageEnd)
+
+          const cost = await updateCreditsByAgent({
+            responseItem,
+            agentTools: config?.agent_mode?.tools || [],
+            agentUsage: messageEnd.metadata?.usage,
+            agentMod: isAgentMode ? 'Dify Agent' : 'Dify Chat',
+            userId: userProfile.takin_id,
+          })
+
           const newCredits = parseFloat(((userProfile.credits || 0) - cost).toFixed(2))
           updateCreditsWithoutRerender(newCredits)
         },

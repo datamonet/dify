@@ -114,16 +114,17 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({ children }) =>
   const updateUserProfileAndVersion = useCallback(async () => {
     if (userProfileResponse && !userProfileResponse.bodyUsed) {
       const result = await userProfileResponse.json()
-      // get user info from mongo
-      // takin command:后续的扣费、跳转个人详情需要用到mongo的user id
-      const mongoUser = await getUserInfo(result.email)
+      // get user info from takin
+      // takin command:后续的扣费、跳转个人详情需要用到takin的user id
+      const takinUserInfo = await getUserInfo(result.email)
+      console.log('takinUserInfo',takinUserInfo)
       setUserProfile({
         ...result,
-        role: mongoUser?.role,
-        name: mongoUser?.name || result.name,
-        avatar: mongoUser?.avatar || result.avatar,
-        credits: mongoUser?.credits || 0,
-        takin_id: mongoUser?._id || '',
+        role: takinUserInfo?.role,
+        name: takinUserInfo?.name || result.name,
+        avatar: takinUserInfo?.image || result.avatar,
+        credits: takinUserInfo?.credits || 0,
+        takin_id: takinUserInfo?.id || '',
       })
       const current_version = userProfileResponse.headers.get('x-version')
       const current_env = process.env.NODE_ENV === 'development' ? 'DEVELOPMENT' : userProfileResponse.headers.get('x-env')

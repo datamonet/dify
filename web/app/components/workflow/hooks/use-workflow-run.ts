@@ -30,7 +30,7 @@ import {
 import { ErrorHandleTypeEnum } from '@/app/components/workflow/nodes/_base/components/error-handle/types'
 
 // takin command:扣费
-import { updateUserCreditsWithTracing } from '@/app/api/pricing'
+import { updateCreditsByWorkflow } from '@/app/api/pricing'
 import { useAppContext } from '@/context/app-context'
 export const useWorkflowRun = () => {
   const { userProfile, updateCreditsWithoutRerender } = useAppContext()
@@ -244,7 +244,10 @@ export const useWorkflowRun = () => {
           // takin command:需要将newWorkflowRunningData赋值，方便传输到扣费函数中
           // console.log('newWorkflowRunningData', newWorkflowRunningData)
           // await updateUserCreditsWithTotalToken(userProfile.takin_id!, newWorkflowRunningData.result.total_tokens || 0, 'Dify Workflow', newWorkflowRunningData)
-          const cost = await updateUserCreditsWithTracing(userProfile.takin_id!, newWorkflowRunningData.tracing!, newWorkflowRunningData)
+          const cost = await updateCreditsByWorkflow({
+            tracing: newWorkflowRunningData.tracing!,
+            userId: userProfile.takin_id!,
+          })
           const newCredits = parseFloat(((userProfile?.credits || 0) - cost).toFixed(2))
           updateCreditsWithoutRerender(newCredits)
         },
