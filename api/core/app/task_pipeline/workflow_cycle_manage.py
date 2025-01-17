@@ -545,7 +545,7 @@ class WorkflowCycleManage:
                 app_id=self._application_generate_entity.app_config.app_id,
                 node_id=workflow_node_execution.node_id,
                 workflow_tool=node_data,
-                invoke_from=self.invoke_from,
+                invoke_from=self._application_generate_entity.invoke_from
             )
             # Add tool name and label to extras
             response.data.extras["tool_name"] = node_data.tool_name
