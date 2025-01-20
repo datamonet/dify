@@ -101,7 +101,7 @@ x-shared-env: &shared-api-worker-env
   MAX_VARIABLE_SIZE: ${MAX_VARIABLE_SIZE:-204800}
   CREATE_TIDB_SERVICE_JOB_ENABLED: ${CREATE_TIDB_SERVICE_JOB_ENABLED:-false}
   RETRIEVAL_TOP_N: ${RETRIEVAL_TOP_N:-0}
-  POSTGRES_URI: ${POSTGRES_URI:-}
+  TAKIN_POSTGRES_URI: ${TAKIN_POSTGRES_URI:-}
 services:
   # API service
   api:
@@ -144,7 +144,7 @@ services:
       CONSOLE_API_URL: ${CONSOLE_API_URL:-}
       APP_API_URL: ${APP_API_URL:-}
       SENTRY_DSN: ${WEB_SENTRY_DSN:-}
-      POSTGRES_URI: ${POSTGRES_URI:-}
+      TAKIN_POSTGRES_URI: ${TAKIN_POSTGRES_URI:-}
       EMAIL_ACCESS_KEY_ID: ${EMAIL_SECRET_ACCESS_KEY:-}
       EMAIL_SECRET_ACCESS_KEY: ${EMAIL_SECRET_ACCESS_KEY:-}
   # The DifySandbox
@@ -202,7 +202,12 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/docker-entrypoint.sh:/docker-entrypoint-mount.sh
       - ./nginx/ssl:/etc/ssl
-    entrypoint: [ "sh", "-c", "cp /docker-entrypoint-mount.sh /docker-entrypoint.sh && sed -i 's/\r$$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh && /docker-entrypoint.sh" ]
+    entrypoint:
+      [
+        "sh",
+        "-c",
+        "cp /docker-entrypoint-mount.sh /docker-entrypoint.sh && sed -i 's/\r$$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh && /docker-entrypoint.sh",
+      ]
     environment:
       NGINX_SERVER_NAME: ${NGINX_SERVER_NAME:-_}
       NGINX_HTTPS_ENABLED: ${NGINX_HTTPS_ENABLED:-true}

@@ -552,7 +552,7 @@ export const request = async<T>(url: string, options = {}, otherOptions?: IOther
     if (errResp.status === 401) {
       const [parseErr, errRespData] = await asyncRunSafe<ResponseError>(errResp.json())
       // takin command:
-      const loginUrl = 'https://test.takin.ai/signin?callbackUrl=https%3A%2F%2Fdify.takin.ai%2Fapps'
+      const loginUrl = `${process.env.NEXT_PUBLIC_AUTH_URL}/signin?callbackUrl=${encodeURIComponent(process.env.NEXT_PUBLIC_CALLBACK_URL!)}`
       // const loginUrl = `${globalThis.location.origin}/signin`
       if (parseErr) {
         globalThis.location.href = loginUrl

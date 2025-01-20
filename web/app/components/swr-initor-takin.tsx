@@ -9,6 +9,7 @@ import { getCookie } from '@/app/api/user'
 type SwrInitorProps = {
   children: ReactNode
 }
+
 const SwrInitor = ({
   children,
 }: SwrInitorProps) => {
@@ -28,13 +29,13 @@ const SwrInitor = ({
    * │
    * └── 否 → 重定向到登录页面
    */
-
+  const isProd = process.env.NODE_ENV === 'production'
+  const tokenName = isProd ? '__Secure-authjs.session-token' : 'authjs.session-token'
   useEffect(() => {
     const checkAuth = async () => {
-      const token = await getCookie('__Secure-authjs.session-token')
-      // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZmF5ZSIsImVtYWlsIjoiZmF5ZV8xMjI1QDE2My5jb20iLCJpYXQiOjE3MjI5Mzc1Nzh9.vGrYPMBZ5D6VE_Jus2C8Icp21NTn9yJ6IbBr95WrDYY'
+      const token = await getCookie(tokenName)
       if (!token) {
-        router.replace('https://test.takin.ai/signin')
+        router.replace(`${process.env.NEXT_PUBLIC_AUTH_URL}/signin`)
         return
       }
 

@@ -27,9 +27,7 @@ export default function AppSelector() {
     localStorage.removeItem('console_token')
     localStorage.removeItem('refresh_token')
 
-    // router.push('/signin')
-    // takin command: 退出登录后跳转takin
-    router.push('https://test.takin.ai/signin?callbackUrl=https%3A%2F%2Fdify.takin.ai%2Fapps')
+    router.push(`${process.env.NEXT_PUBLIC_AUTH_URL}/signin?callbackUrl=${encodeURIComponent(process.env.NEXT_PUBLIC_CALLBACK_URL)}`)
   }
 
   return (

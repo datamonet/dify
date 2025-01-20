@@ -10,7 +10,7 @@ const SignIn = () => {
   const step = searchParams.get('step')
   useEffect(() => {
     router.replace(
-      'https://test.takin.ai/signin?callbackUrl=https%3A%2F%2Fdify.takin.ai%2Fapps',
+      `${process.env.NEXT_PUBLIC_AUTH_URL}/signin?callbackUrl=${encodeURIComponent(process.env.NEXT_PUBLIC_CALLBACK_URL)}`,
     )
   }, [router])
   if (step === 'next')

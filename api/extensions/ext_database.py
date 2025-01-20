@@ -31,6 +31,6 @@ from sqlalchemy.orm import sessionmaker
 dotenv.load_dotenv()
 
 # Create a separate PostgreSQL connection
-postgres_engine = create_engine(os.getenv("POSTGRES_URI"))
+postgres_engine = create_engine(os.getenv("TAKIN_POSTGRES_URI"))
 PostgresSession = sessionmaker(bind=postgres_engine)
 postgres_session = PostgresSession()

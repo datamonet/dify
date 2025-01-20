@@ -58,7 +58,8 @@ def upgrade():
        
     # upload_files 表处理
     with op.batch_alter_table('upload_files', schema=None) as batch_op:
-        batch_op.add_column(sa.Column('source_url', sa.TEXT(), nullable=True))
+        # source_url 列已经在之前的迁移中添加过了，所以这里跳过
+        pass
 
     # workflow_runs 表处理
     with op.batch_alter_table('workflow_runs', schema=None) as batch_op:
