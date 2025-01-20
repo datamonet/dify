@@ -2,8 +2,8 @@
 import axios from 'axios'
 
 export async function updateCreditsByAgent({ responseItem, agentTools, agentUsage, agentMod, userId }: any) {
-  // TODO: 临时写死
-  const { data } = await axios.post('https://test.takin.ai/api/pricing/agent', {
+ 
+  const { data } = await axios.post(`${process.env.NEXT_PUBLIC_AUTH_URL}/api/pricing/agent`, {
     responseItem,
     agentTools,
     agentUsage,
@@ -15,7 +15,7 @@ export async function updateCreditsByAgent({ responseItem, agentTools, agentUsag
 }
 
 export async function updateCreditsByWorkflow({ tracing, userId }: any) {
-  const { data } = await axios.post('https://test.takin.ai/api/pricing/workflow', {
+  const { data } = await axios.post(`${process.env.NEXT_PUBLIC_AUTH_URL}/api/pricing/workflow`, {
     tracing,
     userId,
   })
@@ -24,7 +24,7 @@ export async function updateCreditsByWorkflow({ tracing, userId }: any) {
 }
 
 export async function updateCreditsByKnowledge({ usage, userId, reason, source }: any) {
-  const { data } = await axios.post('https://test.takin.ai/api/pricing/knowledge', {
+  const { data } = await axios.post(`${process.env.NEXT_PUBLIC_AUTH_URL}/api/pricing/knowledge`, {
     usage,
     userId,
     reason,

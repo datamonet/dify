@@ -81,6 +81,114 @@ This document lists all files that have been modified by Takin, organized by fun
 - `web/app/components/explore/takin-list/index.tsx`: Added share card functionality
 - `web/app/components/explore/sidebar/index.tsx`: Added loading states
 
+## Database Initialization
+
+The application uses PostgreSQL as its database and Alembic for database migrations. Here's how to initialize the database:
+
+1. First, make sure PostgreSQL is running and accessible with the credentials specified in your environment file:
+```bash
+psql -h localhost -p 5432 -U postgres
+```
+
+2. Create the database if it doesn't exist:
+```sql
+CREATE DATABASE dify;
+CREATE DATABASE "dify-vector";
+```
+
+3. The database migrations will run automatically when you start the services because `MIGRATION_ENABLED=true` is set in the environment configuration.
+
+4. To manually run migrations (if needed):
+```bash
+# Enter the API container
+docker compose -f docker/docker-compose-takin.yaml exec api bash
+
+# Inside the container, run migrations
+flask db upgrade
+```
+
+5. To verify the database initialization:
+```bash
+# Connect to the database
+psql -h localhost -p 5432 -U postgres -d dify
+
+# List all tables
+\dt
+```
+
+Note: Make sure to use the correct database credentials as specified in your `.env` file. The default credentials are:
+- Username: postgres
+- Password: difyai123456
+- Database: dify
+- Vector Database: dify-vector
+
+## Using Docker Compose
+
+To run the application using `docker/docker-compose-takin.yaml`, follow these steps:
+
+1. Navigate to the docker directory:
+```bash
+cd docker
+```
+
+2. Start all services:
+```bash
+docker compose -f docker-compose-takin.yaml up -d
+```
+
+3. Check the status of all services:
+```bash
+docker compose -f docker-compose-takin.yaml ps
+```
+
+4. View logs of all services:
+```bash
+docker compose -f docker-compose-takin.yaml logs
+```
+
+Or view logs of a specific service (e.g., api):
+```bash
+docker compose -f docker-compose-takin.yaml logs api -f
+```
+
+5. Stop all services:
+```bash
+docker compose -f docker-compose-takin.yaml down
+```
+
+The application will be available at:
+- Web Interface: http://localhost (port 80)
+- API: http://localhost/api
+- HTTPS is also configured on port 443 if enabled in the configuration
+
+Note: Make sure Docker is installed and running on your machine before executing these commands.
+
+## Accessing PostgreSQL Database Locally
+
+When running the application using `docker/docker-compose-takin.yaml`, the PostgreSQL database is configured with the following default settings:
+
+- Host: localhost
+- Port: 5432
+- Database: dify
+- Username: postgres
+- Password: difyai123456
+
+You can connect to the database using any PostgreSQL client (e.g., pgAdmin, DBeaver) with these credentials. The database is exposed to the host machine on port 5432.
+
+For command line access, you can use:
+
+```bash
+psql -h localhost -p 5432 -U postgres -d dify
+```
+
+When prompted for password, enter: `difyai123456`
+
+Note: Make sure to change these default credentials in production environments by modifying the environment variables in the docker-compose file:
+- DB_USERNAME
+- DB_PASSWORD
+- DB_PORT
+- DB_DATABASE
+
 ## Summary of Changes
 
 Total number of files modified: 43 files (20 Python files, 23 TypeScript/JavaScript files)

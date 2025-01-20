@@ -30,9 +30,30 @@ The first step is to deploy the required middleware services (databases and cach
    ```
    > Note: If you prefer a different vector database, change the yaml.
 
+At the end of this step, you have:
+1. weaviate
+2. redis
+3. sandbox
+4. ssrf_proxy
+
+Now, you need to start a local postgres database with the following setup:
+
+You need to create two databases:
+
+- `dify` for dify main database
+- `dify-vector` for dify vector database
+
+```
+DB_USERNAME=postgres
+DB_PASSWORD=
+DB_HOST=localhost
+DB_PORT=5432
+DB_DATABASE=dify
+```
+
 ## 2. Backend Setup
 
-> **Important Note**: When running locally, you need to modify the pricing API endpoint in `web/app/api/pricing.ts`. After starting test-takin, update the API endpoint from `test.takin.ai` to `localhost:3000` to ensure proper billing functionality.
+in `web/.env`, NEXT_PUBLIC_AUTH_URL need to be updated to production url or http://localhost:3001 for local testing. 
 
 1. Navigate to the API directory:
    ```bash
@@ -41,9 +62,19 @@ The first step is to deploy the required middleware services (databases and cach
 
 2. Set up environment variables:
    ```bash
-   cp .env.example .env
+   cp takin.env.example .env
    ```
-   > Important: Review and modify the configurations in `.env` file according to your needs.
+   Changed from dify default:
+   - added `TAKIN_POSTGRES_URI=postgresql://postgres:@localhost:5432/takin`
+   - remove database password: `DB_PASSWORD=`
+   - change `VECTOR_STORE=pgvector`
+      ```
+      PGVECTOR_HOST=127.0.0.1
+      PGVECTOR_PORT=5433
+      PGVECTOR_USER=postgres
+      PGVECTOR_PASSWORD=
+      PGVECTOR_DATABASE=dify-vector
+      ```
 
 3. Create and activate Python environment:
    ```bash
