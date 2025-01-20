@@ -31,6 +31,19 @@ make
 make install  # Use sudo make install if you encounter permission issues
 ```
 
+If run into `make: pg_config: Command not found` error, please run, add to path:
+
+```
+echo 'export PATH="/usr/local/opt/postgresql@16/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+or
+
+```
+echo 'export PATH="/usr/local/opt/postgresql@16/bin:$PATH"' >> ~/.bash_profile
+source ~/.bash_profile
+```
+
 3. Create required databases:
 ```bash
 # Connect to PostgreSQL
@@ -45,11 +58,19 @@ CREATE DATABASE dify;
 CREATE DATABASE dify_vector; 
 
 # Enable pgvector extension for vector database
-\c dify_vector
+\c dify_vector  # The \c command (or \connect) is a psql meta-command that establishes a connection to a PostgreSQL database.
 CREATE EXTENSION IF NOT EXISTS vector;
 
 # Verify pgvector installation
-\dx vector
+\dx vector  # \dx is a psql meta-command that displays all installed extensions
+
+```
+ List of installed extensions
+  Name  | Version | Schema |                     Description
+--------+---------+--------+------------------------------------------------------
+ vector | 0.8.0   | public | vector data type and ivfflat and hnsw access methods
+(1 row)
+```
 
 # Exit psql
 \q
@@ -93,12 +114,23 @@ This will start the following services:
    cp takin.env.example .env
    ```
 
-   Required environment variables include:
+   Add the required environment variables include:
    - S3_ENDPOINT
    - S3_BUCKET_NAME
    - S3_ACCESS_KEY
    - S3_SECRET_KEY
    - S3_REGION
+
+   an example is:
+
+   ```
+   S3_ADDRESS_STYLE=path
+   S3_ENDPOINT=https://s3.us-east-1.amazonaws.com
+   S3_BUCKET_NAME=takin-dify-dev
+   S3_ACCESS_KEY=xxx
+   S3_SECRET_KEY=xxx
+   S3_REGION=us-east-1
+   ```
 
 3. Create and activate Python environment:
    ```bash
@@ -120,6 +152,8 @@ This will start the following services:
    ```bash
    poetry run python -m flask run --host 0.0.0.0 --port=5001 --debug
    ```
+
+Run into the following error: https://github.com/datamonet/takin/issues/885
 
 ## 4. Frontend Setup
 
