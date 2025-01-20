@@ -94,8 +94,6 @@ This will start the following services:
    ```
 
    Required environment variables include:
-   - SECRET_KEY
-   - S3_USE_AWS_MANAGED_IAM
    - S3_ENDPOINT
    - S3_BUCKET_NAME
    - S3_ACCESS_KEY
