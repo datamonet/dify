@@ -1,6 +1,6 @@
-# Local Deployment Guide for Dify
+# Local Setup for Takin-Dify
 
-This guide will walk you through the process of setting up Dify locally for development purposes. The deployment involves setting up both the backend and frontend components, along with necessary middleware services.
+This guide helps you set up Takin+Dify for local development and testing.
 
 ## Prerequisites
 
@@ -8,10 +8,58 @@ This guide will walk you through the process of setting up Dify locally for deve
 - Python 3.12
 - [Poetry](https://python-poetry.org/docs/) for Python dependency management
 - Git (for cloning the repository)
+- PostgreSQL installed locally
 
-## 1. Middleware Setup
+## 1. Database Setup
 
-The first step is to deploy the required middleware services (databases and caches).
+### PostgreSQL Installation and Configuration
+
+1. Install PostgreSQL:
+```bash
+# On macOS using Homebrew
+brew install postgresql@16
+brew services start postgresql@16
+```
+
+2. Install pgvector extension:
+```bash
+# Install PostgreSQL development files and build tools
+brew install postgresql@16
+git clone https://github.com/pgvector/pgvector.git
+cd pgvector
+make
+make install  # Use sudo make install if you encounter permission issues
+```
+
+3. Create required databases:
+```bash
+# Connect to PostgreSQL
+psql postgres
+
+# Create databases 
+# Main Takin service database (user information, etc.)
+CREATE DATABASE takin;   
+# Main Dify service database (workflows, etc.)
+CREATE DATABASE dify;      
+# Vector database for Dify
+CREATE DATABASE dify_vector; 
+
+# Enable pgvector extension for vector database
+\c dify_vector
+CREATE EXTENSION IF NOT EXISTS vector;
+
+# Verify pgvector installation
+\dx vector
+
+# Exit psql
+\q
+```
+
+Note: By default, the database connection string will be `postgresql://postgres:@localhost:5432/database`. If you modify the username, password, or port, you'll need to update the corresponding `.env` files.
+
+## 2. Middleware Setup
+
+First, deploy the required middleware services:
 
 1. Navigate to the `docker` directory:
    ```bash
@@ -20,40 +68,20 @@ The first step is to deploy the required middleware services (databases and cach
 
 2. Create middleware environment file:
    ```bash
-   cp middleware.env.example middleware.env
+   cp takin.middleware.env.example middleware.env
    ```
 
 3. Start middleware services:
    ```bash
-   # For Weaviate vector database (default)
    docker compose -f docker-compose.middleware-takin.yaml up -d
    ```
-   > Note: If you prefer a different vector database, change the yaml.
 
-At the end of this step, you have:
-1. weaviate
-2. redis
-3. sandbox
-4. ssrf_proxy
+This will start the following services:
+- Redis
+- Sandbox
+- SSRF Proxy
 
-Now, you need to start a local postgres database with the following setup:
-
-You need to create two databases:
-
-- `dify` for dify main database
-- `dify-vector` for dify vector database
-
-```
-DB_USERNAME=postgres
-DB_PASSWORD=
-DB_HOST=localhost
-DB_PORT=5432
-DB_DATABASE=dify
-```
-
-## 2. Backend Setup
-
-in `web/.env`, NEXT_PUBLIC_AUTH_URL need to be updated to production url or http://localhost:3001 for local testing. 
+## 3. Backend Setup
 
 1. Navigate to the API directory:
    ```bash
@@ -64,17 +92,15 @@ in `web/.env`, NEXT_PUBLIC_AUTH_URL need to be updated to production url or http
    ```bash
    cp takin.env.example .env
    ```
-   Changed from dify default:
-   - added `TAKIN_POSTGRES_URI=postgresql://postgres:@localhost:5432/takin`
-   - remove database password: `DB_PASSWORD=`
-   - change `VECTOR_STORE=pgvector`
-      ```
-      PGVECTOR_HOST=127.0.0.1
-      PGVECTOR_PORT=5433
-      PGVECTOR_USER=postgres
-      PGVECTOR_PASSWORD=
-      PGVECTOR_DATABASE=dify-vector
-      ```
+
+   Required environment variables include:
+   - SECRET_KEY
+   - S3_USE_AWS_MANAGED_IAM
+   - S3_ENDPOINT
+   - S3_BUCKET_NAME
+   - S3_ACCESS_KEY
+   - S3_SECRET_KEY
+   - S3_REGION
 
 3. Create and activate Python environment:
    ```bash
@@ -97,14 +123,6 @@ in `web/.env`, NEXT_PUBLIC_AUTH_URL need to be updated to production url or http
    poetry run python -m flask run --host 0.0.0.0 --port=5001 --debug
    ```
 
-## 3. Worker Service (Optional)
-
-If you need to handle async tasks (e.g., dataset importing, document indexing), start the worker service:
-
-```bash
-poetry run python -m celery -A app.celery worker -P gevent -c 1 --loglevel INFO -Q dataset,generation,mail,ops_trace,app_deletion
-```
-
 ## 4. Frontend Setup
 
 1. Navigate to the web directory:
@@ -114,28 +132,16 @@ poetry run python -m celery -A app.celery worker -P gevent -c 1 --loglevel INFO 
 
 2. Install dependencies:
    ```bash
-   npm install
-   # or
    yarn install --frozen-lockfile
    ```
 
 3. Configure environment variables:
    ```bash
-   cp .env.example .env.local
-   ```
-
-   Key environment variables to configure:
-   ```env
-   NEXT_PUBLIC_DEPLOY_ENV=DEVELOPMENT
-   NEXT_PUBLIC_EDITION=SELF_HOSTED
-   NEXT_PUBLIC_API_PREFIX=http://localhost:5001/console/api
-   NEXT_PUBLIC_PUBLIC_API_PREFIX=http://localhost:5001/api
+   cp takin.env.example .env.local
    ```
 
 4. Start the development server:
    ```bash
-   npm run dev
-   # or
    yarn dev
    ```
 
@@ -143,9 +149,32 @@ poetry run python -m celery -A app.celery worker -P gevent -c 1 --loglevel INFO 
 
 ## Next Steps
 
-After completing the setup, you can:
-- Configure your first application
-- Start developing new features
-- Explore the API documentation
+For the final step of setting up the main Takin system, please refer to:
+https://github.com/datamonet/takin-test/blob/main/README.md
 
-For more detailed information, please refer to our [official documentation](https://docs.dify.ai).
+
+## Troubleshooting
+
+### Unable to Use Dify Tools
+
+If you cannot access or use Dify tools after initial setup, follow these steps:
+
+1. Update User Role in Takin Database:
+```sql
+# Connect to takin database
+psql postgres
+\c takin
+
+# Update your user role to admin
+UPDATE users SET role = 'admin' WHERE email = 'your.email@example.com';
+```
+
+2. Configure Dify Tools:
+   - Log in to the Dify interface
+   - Navigate to the Tools section in the sidebar
+   - For each tool you want to use:
+     - Click on the tool to open its configuration panel
+     - Input the required API keys and credentials
+     - Save the configuration
+
+Note: Make sure to restart both Takin and Dify services after making these changes for them to take effect.
