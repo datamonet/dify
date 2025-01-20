@@ -177,7 +177,7 @@ Run into the following error: https://github.com/datamonet/takin/issues/885
    yarn dev
    ```
 
-5. Access the application at `http://localhost:3000`
+5. Access the application at `http://localhost:3001`
 
 ## Next Steps
 
