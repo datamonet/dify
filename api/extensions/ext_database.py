@@ -17,20 +17,3 @@ db = SQLAlchemy(metadata=metadata)
 
 def init_app(app: DifyApp):
     db.init_app(app)
-
-# takin command:链接数据库
-
-
-
-
-import os
-import dotenv
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-dotenv.load_dotenv()
-
-# Create a separate PostgreSQL connection
-postgres_engine = create_engine(os.getenv("TAKIN_POSTGRES_URI"))
-PostgresSession = sessionmaker(bind=postgres_engine)
-postgres_session = PostgresSession()

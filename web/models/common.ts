@@ -32,7 +32,7 @@ export type UserProfileResponse = {
   created_at?: string
   takin_id?: string // takin command:takin account id
   credits?: number // takin command
-  role?: number // takin command 
+  role?: string // takin command
 }
 
 export type UserProfileOriginResponse = {

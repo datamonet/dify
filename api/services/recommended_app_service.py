@@ -1,12 +1,13 @@
 from typing import Optional
+import os
 
 from flask_sqlalchemy.pagination import Pagination
 
 from configs import dify_config
-from extensions.ext_database import postgres_session, db
+from extensions.ext_database import db
 from models.model import Account, App, RecommendedApp
 from services.recommend_app.recommend_app_factory import RecommendAppRetrievalFactory
-
+import requests
 
 class RecommendedAppService:
     @classmethod
@@ -52,18 +53,31 @@ class RecommendedAppService:
             account.email: account.email for account in accounts_cursor
         }
 
-        # PostgreSQL查询用户名称
+        # 获取用户信息
         emails = list(email_to_name.keys())  # 提取所有的 email
-        users_cursor = postgres_session.execute(
-            "SELECT name, email FROM users WHERE email = ANY(:emails)",
-            {"emails": emails}
-        ).fetchall()
         
-        # 使用 email 获取用户名，如果没有 name 字段，则使用 email 中 @ 之前的部分
-        email_to_name.update({
-            user.email: user.name or user.email.split('@')[0]
-            for user in users_cursor if user.email
-        })
+        try:
+            print(emails)
+            response = requests.post(
+                f'{os.getenv("TAKIN_API_URL", "http://127.0.0.1:3000")}/api/integrations/user',
+                json={"emails": emails}
+            )
+            print(response.json())
+            users_data = response.json().get('data', [])
+            
+            print(users_data)
+            # 更新用户名映射
+            email_to_name.update({
+                user['email']: user['name'] or user['email'].split('@')[0]
+                for user in users_data
+            })
+            
+        except Exception as e:
+            print(f"Error fetching user data: {str(e)}")
+            # 如果请求失败，使用email前缀作为用户名
+            email_to_name.update({
+                email: email.split('@')[0] for email in emails
+            })
 
         # 将用户名称嵌入到推荐应用数据中
         for app in recommended_apps.items:

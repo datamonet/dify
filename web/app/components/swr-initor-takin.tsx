@@ -29,11 +29,10 @@ const SwrInitor = ({
    * │
    * └── 否 → 重定向到登录页面
    */
-  const isProd = process.env.NODE_ENV === 'production'
-  const tokenName = isProd ? '__Secure-authjs.session-token' : 'authjs.session-token'
+
   useEffect(() => {
     const checkAuth = async () => {
-      const token = await getCookie(tokenName)
+      const token = await getCookie()
       if (!token) {
         router.replace(`${process.env.NEXT_PUBLIC_AUTH_URL}/signin`)
         return

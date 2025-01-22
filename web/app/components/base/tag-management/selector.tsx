@@ -15,7 +15,7 @@ import type { Tag } from '@/app/components/base/tag-management/constant'
 import Checkbox from '@/app/components/base/checkbox'
 import { bindTag, createTag, fetchTagList, unBindTag } from '@/service/tag'
 import { ToastContext } from '@/app/components/base/toast'
-import { useAppContext } from "@/context/app-context"
+import { useAppContext } from '@/context/app-context'
 
 type TagSelectorProps = {
   targetID: string
@@ -194,7 +194,7 @@ const Panel = (props: PanelProps) => {
       )}
       <Divider className='!h-[1px] !my-0' />
       {/* takin command：tag修改只能管理员 */}
-      {userProfile && (userProfile.role || 10) >= 50 && (
+      {userProfile && userProfile.role === 'ADMIN' && (
         <div className='p-1'>
           <div className='flex items-center gap-2 pl-3 py-[6px] pr-2 rounded-lg cursor-pointer hover:bg-gray-100' onClick={() => setShowTagManagementModal(true)}>
             <Tag03 className='h-4 w-4 text-gray-500' />

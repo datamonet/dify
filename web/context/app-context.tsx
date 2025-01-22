@@ -115,8 +115,8 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({ children }) =>
     if (userProfileResponse && !userProfileResponse.bodyUsed) {
       const result = await userProfileResponse.json()
       // get user info from takin
-      // takin command:后续的扣费、跳转个人详情需要用到takin的user id
-      const takinUserInfo = await getUserInfo(result.email)
+      // takin command:后续的扣费、跳转个人详情需要用到takin的用户信息
+      const takinUserInfo = await getUserInfo()
       setUserProfile({
         ...result,
         role: takinUserInfo?.role,

@@ -11,6 +11,7 @@ from services.recommended_app_service import RecommendedAppService
 app_fields = {
     "id": fields.String,
     "name": fields.String,
+    "username": fields.String, # takin command: username
     "mode": fields.String,
     "icon": fields.String,
     "icon_url": AppIconUrlField,

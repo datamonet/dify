@@ -1,46 +1,41 @@
 'use server'
 import { cookies } from 'next/headers'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import axios from 'axios'
 
 type User = {
   id: string
   name: string
   email: string
   image: string
-  role: number
-  level: number
+  role: string
+  level: string
   credits: number
 } | null
 
 /**
  * Get user information
- * @param email
  */
-export async function getUserInfo(email: string) {
+export async function getUserInfo() {
   try {
-    const user = await prisma.user.findFirst({
-      where: { email },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        image: true,
-        role: true,
-        level: true,
-        subscription_credits: true,
-        extra_credits: true,
-        subscription_purchased_credits: true,
+    const token = await getCookie()
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_AUTH_URL}/api/integrations/user`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    })
+    )
+    const userData = response.data.data
 
-    if (!user)
+    if (!userData)
       return null
 
     return {
-      ...user,
-      credits: (user.subscription_credits || 0) + (user.extra_credits || 0),
+      ...userData,
+      image: `${process.env.NEXT_PUBLIC_AUTH_URL}${userData.image}`,
+      credits:
+        userData.subscriptionCredits + userData.extraCredits + userData.subscriptionPurchasedCredits,
     } as User
   }
   catch (error) {
@@ -59,6 +54,10 @@ export async function deleteCookie(name: string) {
   })
 }
 
-export async function getCookie(name: string) {
-  return cookies().get(name)?.value
+export async function getCookie() {
+  const isProd = process.env.NODE_ENV === 'production'
+  const tokenName = isProd
+    ? '__Secure-authjs.session-token'
+    : 'authjs.session-token'
+  return cookies().get(tokenName)?.value
 }
