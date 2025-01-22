@@ -1,5 +1,8 @@
 # Takin-Dify Integration Documentation
 
+Takin Frontend is running locally: `http://localhost:3000`
+Dify Frontend is running locally: `http://localhost:3001`
+
 ⚠️ **Important Note About TAKIN_API_URL**
 Before proceeding with deployment, please note:
 - The `TAKIN_API_URL` environment variable is crucial for both frontend and backend
@@ -8,102 +11,6 @@ Before proceeding with deployment, please note:
   - Frontend (.env): Controls authentication and user interface integrations
   - Backend (.env): Controls billing operations and user information retrieval
 - Default value for local development: `http://localhost:3000`
-
-# Takin Changes Documentation
-
-This document lists all files that have been modified by Takin, organized by functionality.
-
-## User Data Isolation
-
-- `api/models/model.py`: Added user_id field for data isolation and username field for display
-- `api/services/app_service.py`: Added user ID to app creation
-- `api/services/app_dsl_service.py`: Added user ID for data isolation in app DSL
-- `api/controllers/console/explore/installed_app.py`: Added user ID filtering for data isolation
-
-## Tools and Workflow Management
-
-- `api/core/tools/tool_manager.py`:
-  - Modified API tool visibility filtering
-  - Updated workflow tool visibility to be user-specific
-- `api/services/tools/workflow_tools_manage_service.py`: Added user filtering for workflow tools
-- `api/core/tools/provider/builtin/takin_dalle/tools/dalle2.py`: Added parameters for billing calculation
-- `api/core/tools/provider/builtin/takin_dalle/tools/dalle3.py`: Added parameters for billing calculation
-- `api/core/tools/provider/builtin/webscraper/tools/webscraper.py`: Disabled large model usage for web scraping
-
-## Recommended Apps System
-
-- `api/services/recommended_app_service.py`: Added APIs for creating and deleting recommended apps
-- `api/controllers/console/explore/recommended_app.py`: Added pagination support
-- `api/services/recommend_app/database/database_retrieval.py`: Modified app recommendations based on user roles
-
-## Database and Infrastructure
-
-- `api/extensions/ext_database.py`: Database connection modifications
-- `api/models/dataset.py`: Added index_struct field for vector indexing
-- `api/core/rag/datasource/vdb/pgvector/pgvector.py`: Modified table naming convention for PGVector
-
-## Explore Features
-
-- `api/controllers/console/explore/workflow.py`: Added tracking for billing calculations
-- `api/controllers/common/helpers.py` and `api/controllers/common/fields.py`: Added agent mode configuration for tools billing
-
-## Account Management
-
-- `api/services/account_service.py`: Added email-based user queries and Takin-specific queries
-
-## Frontend Changes
-
-### Base Components and Services
-
-- `web/service/base.ts`: Base service modifications
-- `web/service/explore.ts`: Added community features and recommendation functionality
-- `web/next.config.js`: Adjusted body size limit configuration
-- `web/models/common.ts`: Added Takin-specific user fields (takin_id, credits, role)
-- `web/models/explore.ts`: Added username display functionality
-
-### Billing and Credits System
-
-- `web/app/api/pricing.ts`: Core billing logic implementation
-  - Credit system (subscription_credits and extra_credits)
-  - USD to credits conversion with Takin coefficient
-  - Agent tool usage billing
-  - Workflow tracing and consumption tracking
-- `web/app/components/billing/credits-billing-modal/index.tsx`: Credits billing UI
-- `web/app/components/header/credits/index.tsx`: Credits display in header
-- `web/app/api/user.ts`: User cookie handling for Takin domain
-
-### Authentication and User Management
-
-- `web/app/account/avatar.tsx`: Added Takin logout redirect
-- `web/app/signin/_header.tsx`: Integrated Takin logo
-- `web/app/components/header/account-dropdown/index.tsx`: Added language switcher and logout handling
-- `web/app/components/swr-initor-takin.tsx`: Authentication flow handling
-- `web/app/signin/page.tsx`: Sign-in page integration
-- `web/app/components/header/index.tsx`: Navigation and Takin links
-
-### App and Workflow Features
-
-- `web/app/components/app/app-publisher/index.tsx`: Added app public status management
-- `web/app/components/workflow/hooks/use-workflow-run.ts`: Added billing integration
-- `web/app/components/share/text-generation/result/index.tsx`: Added workflow process data handling
-- `web/context/app-context.tsx`: Added user ID handling for billing and profile navigation
-
-### Chat and UI Components
-
-- `web/app/components/base/chat/chat/hooks.ts`: Integrated billing module and credit tracking
-- `web/app/components/base/toast/index.tsx`: UI improvements for error notifications
-- `web/app/components/base/tag-management/favourite.tsx`: Added app favoriting functionality
-
-### Dataset Management
-
-- `web/app/components/datasets/create/step-two/index.tsx`: Added QA calculation and file upload billing
-- `web/app/(commonLayout)/datasets/Container.tsx`: Modified API page visibility
-
-### Explore Features
-
-- `web/app/components/explore/app-card/index.tsx`: Added internationalization
-- `web/app/components/explore/takin-list/index.tsx`: Added share card functionality
-- `web/app/components/explore/sidebar/index.tsx`: Added loading states
 
 ## Database Initialization
 
@@ -226,59 +133,217 @@ Note: Make sure to change these default credentials in production environments b
 - DB_PORT
 - DB_DATABASE
 
-## Summary of Changes
+# Local Setup for Takin-Dify
 
-Total number of files modified: 43 files (20 Python files, 23 TypeScript/JavaScript files)
+This guide helps you set up Takin+Dify for local development and testing.
 
-Changes by area:
+## Prerequisites
 
-1. **Frontend Changes** (23 files)
+- Docker and Docker Compose installed
+- Python 3.12
+- [Poetry](https://python-poetry.org/docs/) for Python dependency management
+- Git (for cloning the repository)
+- PostgreSQL installed locally
 
-   - Base components and services modifications
-   - Billing and credits system implementation
-   - Authentication and user management
-   - App and workflow features
-   - Chat and UI components
-   - Dataset management
-   - Explore features integration
-   - Focus on billing integration, UI/UX improvements, and internationalization
+## 1. Database Setup
 
-2. **Tools and Workflow Management** (6 files)
+### PostgreSQL Installation and Configuration
 
-   - Tool visibility and permissions
-   - Billing integration
-   - DALL-E and web scraper modifications
+1. Install PostgreSQL:
+```bash
+# On macOS using Homebrew
+brew install postgresql@16
+brew services start postgresql@16
+```
 
-3. **User Data Isolation** (4 files)
+2. Install pgvector extension:
+```bash
+# Install PostgreSQL development files and build tools
+brew install postgresql@16
+git clone https://github.com/pgvector/pgvector.git
+cd pgvector
+make
+make install  # Use sudo make install if you encounter permission issues
+```
 
-   - Core model and service files
-   - User-specific data separation
+If run into `make: pg_config: Command not found` error, please run, add to path:
 
-4. **Recommended Apps System** (3 files)
+```
+echo 'export PATH="/usr/local/opt/postgresql@16/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+or
 
-   - App recommendations
-   - Pagination support
-   - Role-based filtering
+```
+echo 'export PATH="/usr/local/opt/postgresql@16/bin:$PATH"' >> ~/.bash_profile
+source ~/.bash_profile
+```
 
-5. **Database and Infrastructure** (3 files)
+3. Create required databases:
+```bash
+# Connect to PostgreSQL
+psql postgres
 
-   - Database connections
-   - Vector storage optimizations
+# Create databases 
+# Main Takin service database (user information, etc.)
+CREATE DATABASE takin;   
+# Main Dify service database (workflows, etc.)
+CREATE DATABASE dify;      
+# Vector database for Dify
+CREATE DATABASE dify_vector; 
 
-6. **Explore Features** (3 files)
+# Enable pgvector extension for vector database
+\c dify_vector  # The \c command (or \connect) is a psql meta-command that establishes a connection to a PostgreSQL database.
+CREATE EXTENSION IF NOT EXISTS vector;
 
-   - Billing tracking
-   - Agent mode configurations
+# Verify pgvector installation
+\dx vector  # \dx is a psql meta-command that displays all installed extensions
 
-7. **Account Management** (1 file)
-   - User query and authentication updates
+```
+ List of installed extensions
+  Name  | Version | Schema |                     Description
+--------+---------+--------+------------------------------------------------------
+ vector | 0.8.0   | public | vector data type and ivfflat and hnsw access methods
+(1 row)
+```
 
-Key Themes Across Changes:
+# Exit psql
+\q
+```
 
-1. **Billing Integration**: Comprehensive implementation across frontend and backend for tracking and managing user credits
-2. **User Experience**: Enhanced UI components, internationalization, and improved error handling
-3. **Data Isolation**: Strengthened user-specific data handling and permissions
-4. **Community Features**: Added sharing, favoriting, and public app management capabilities
-5. **Infrastructure**: Optimized database connections and vector storage
+Note: By default, the database connection string will be `postgresql://postgres:@localhost:5432/database`. If you modify the username, password, or port, you'll need to update the corresponding `.env` files.
 
-The most significant changes were in the Frontend (23 files) and Tools and Workflow Management (6 files) areas, with a strong focus on billing integration, user experience improvements, and data isolation.
+## 2. Middleware Setup
+
+First, deploy the required middleware services:
+
+1. Navigate to the `docker` directory:
+   ```bash
+   cd docker
+   ```
+
+2. Create middleware environment file:
+   ```bash
+   cp takin.middleware.env.example middleware.env
+   ```
+
+3. Start middleware services:
+   ```bash
+   docker compose -f docker-compose.middleware-takin.yaml up -d
+   ```
+
+This will start the following services:
+- Redis
+- Sandbox
+- SSRF Proxy
+
+## 3. Backend Setup
+
+1. Navigate to the API directory:
+   ```bash
+   cd ../api
+   ```
+
+2. Set up environment variables:
+   ```bash
+   cp takin.env.example .env
+   ```
+
+   Add the required environment variables include:
+   - S3_ENDPOINT
+   - S3_BUCKET_NAME
+   - S3_ACCESS_KEY
+   - S3_SECRET_KEY
+   - S3_REGION
+
+   an example is:
+
+   ```
+   S3_ADDRESS_STYLE=path
+   S3_ENDPOINT=https://s3.us-east-1.amazonaws.com
+   S3_BUCKET_NAME=takin-dify-dev
+   S3_ACCESS_KEY=xxx
+   S3_SECRET_KEY=xxx
+   S3_REGION=us-east-1
+   ```
+
+**Attention**: `SECRET_KEY=xxx` this should be set same as the Takin `.env` variable `AUTH_SECRET=` so that two systems can talk. 
+
+3. Create and activate Python environment:
+   ```bash
+   poetry env use 3.12  # use Python 3.12 for your project's virtual environment
+   poetry shell  # activate the virtual environment
+   ```
+
+4. Install dependencies:
+   ```bash
+   poetry install  # install dependencies
+   ```
+
+5. Run database migrations:
+   ```bash
+   poetry run python -m flask db upgrade  # run database migrations
+   ```
+
+6. Start the backend server:
+   ```bash
+   poetry run python -m flask run --host 0.0.0.0 --port=5001 --debug
+   ```
+
+Run into the following error: https://github.com/datamonet/takin/issues/885
+
+## 4. Frontend Setup
+
+1. Navigate to the web directory:
+   ```bash
+   cd ../web
+   ```
+
+2. Install dependencies:
+   ```bash
+   yarn install --frozen-lockfile
+   ```
+
+3. Configure environment variables:
+   ```bash
+   cp takin.env.example .env.local
+   ```
+
+4. Start the development server:
+   ```bash
+   yarn dev
+   ```
+
+5. Access the application at `http://localhost:3001`
+
+## Next Steps
+
+For the final step of setting up the main Takin system, please refer to:
+https://github.com/datamonet/takin-test/blob/main/README.md
+
+
+## Troubleshooting
+
+### Unable to Use Dify Tools
+
+If you cannot access or use Dify tools after initial setup, follow these steps:
+
+1. Update User Role in Takin Database:
+```sql
+# Connect to takin database
+psql postgres
+\c takin
+
+# Update your user role to admin
+UPDATE users SET role = 'admin' WHERE email = 'your.email@example.com';
+```
+
+2. Configure Dify Tools:
+   - Log in to the Dify interface
+   - Navigate to the Tools section in the sidebar
+   - For each tool you want to use:
+     - Click on the tool to open its configuration panel
+     - Input the required API keys and credentials
+     - Save the configuration
+
+Note: Make sure to restart both Takin and Dify services after making these changes for them to take effect.
