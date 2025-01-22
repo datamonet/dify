@@ -132,20 +132,22 @@ This will start the following services:
    S3_REGION=us-east-1
    ```
 
+**Attention**: `SECRET_KEY=xxx` this should be set same as the Takin `.env` variable `AUTH_SECRET=` so that two systems can talk. 
+
 3. Create and activate Python environment:
    ```bash
-   poetry env use 3.12
-   poetry shell
+   poetry env use 3.12  # use Python 3.12 for your project's virtual environment
+   poetry shell  # activate the virtual environment
    ```
 
 4. Install dependencies:
    ```bash
-   poetry install
+   poetry install  # install dependencies
    ```
 
 5. Run database migrations:
    ```bash
-   poetry run python -m flask db upgrade
+   poetry run python -m flask db upgrade  # run database migrations
    ```
 
 6. Start the backend server:
