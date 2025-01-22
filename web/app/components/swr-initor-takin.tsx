@@ -34,7 +34,7 @@ const SwrInitor = ({
     const checkAuth = async () => {
       const token = await getCookie()
       if (!token) {
-        router.replace(`${process.env.NEXT_PUBLIC_AUTH_URL}/signin`)
+        router.replace(`${process.env.TAKIN_API_URL}/signin`)
         return
       }
 

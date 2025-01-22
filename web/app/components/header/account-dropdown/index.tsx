@@ -45,7 +45,7 @@ export default function AppSelector({ isMobile }: IAppSelector) {
     localStorage.removeItem('console_token')
     localStorage.removeItem('refresh_token')
 
-    router.push(`${process.env.NEXT_PUBLIC_AUTH_URL}/signin?callbackUrl=${encodeURIComponent(process.env.NEXT_PUBLIC_CALLBACK_URL!)}`)
+    router.push(`${process.env.TAKIN_API_URL}/signin?callbackUrl=${encodeURIComponent(process.env.NEXT_PUBLIC_CALLBACK_URL!)}`)
   }
 
   return (
