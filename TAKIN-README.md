@@ -286,6 +286,9 @@ This will start the following services:
    poetry run python -m flask db upgrade  # run database migrations
    ```
 
+NOTE: `flask db migrate -m "add:takin db model update"` we need to add migration for Takin schema changes
+
+
 6. Start the backend server:
    ```bash
    poetry run python -m flask run --host 0.0.0.0 --port=5001 --debug
