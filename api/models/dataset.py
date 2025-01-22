@@ -48,7 +48,7 @@ class Dataset(db.Model):
     permission = db.Column(db.String(255), nullable=False, server_default=db.text("'only_me'::character varying"))
     data_source_type = db.Column(db.String(255))
     indexing_technique = db.Column(db.String(255), nullable=True)
-    index_struct = db.Column(db.Text, nullable=True)  # takin command 记录了向量的基本名字 for indexing
+    index_struct = db.Column(db.Text, nullable=True)
     created_by = db.Column(StringUUID, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text("CURRENT_TIMESTAMP(0)"))
     updated_by = db.Column(StringUUID, nullable=True)

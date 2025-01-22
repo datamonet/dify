@@ -2,14 +2,15 @@
 
 Takin Frontend is running locally: `http://localhost:3000`
 Dify Frontend is running locally: `http://localhost:3001`
+Dify API is running locally: `http://localhost:5001`
 
 ⚠️ **Important Note About TAKIN_API_URL**
 Before proceeding with deployment, please note:
 - The `TAKIN_API_URL` environment variable is crucial for both frontend and backend
 - It determines where the system accesses user information, billing operations, and other integration APIs
 - Must be properly configured in both:
-  - Frontend (.env): Controls authentication and user interface integrations
-  - Backend (.env): Controls billing operations and user information retrieval
+  - Frontend (.env): Controls authentication and user interface integrations： `web/.env`
+  - Backend (.env): Controls billing operations and user information retrieval: `api/.env`
 - Default value for local development: `http://localhost:3000`
 
 ## Database Initialization
