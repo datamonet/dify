@@ -61,6 +61,9 @@ Note: Make sure to use the correct database credentials as specified in your `.e
 
 ## Using Docker Compose
 
+Important: Before proceeding, ensure there is no `.env` file in the docker directory to avoid configuration conflicts.
+When executing `docker/docker-compose-takin.yaml`, the system will first apply the `--envfile .env` configuration, followed by the `docker/.env` file in the same directory.
+
 To run the application using `docker/docker-compose-takin.yaml`, follow these steps:
 
 1. Navigate to the docker directory:
