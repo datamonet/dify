@@ -6,7 +6,8 @@ Dify API is running locally: `http://localhost:5001`
 
 ⚠️ **Important Note About TAKIN_API_URL**
 Before proceeding with deployment, please note:
-- The `TAKIN_API_URL` environment variable is crucial for both frontend and backend
+- For backend use `TAKIN_API_URL=http://localhost:3000`
+- for front end use `NEXT_PUBLIC_TAKIN_API_URL=http://localhost:3000`
 - It determines where the system accesses user information, billing operations, and other integration APIs
 - Must be properly configured in both:
   - Frontend (.env): Controls authentication and user interface integrations： `web/.env`
@@ -237,7 +238,7 @@ First, deploy the required middleware services:
    ```
 
 This will start the following services:
-- Redis
+- Redis: you can use `docker exec docker-redis-1 redis-cli -a difyai123456 config get requirepass` to test whether Redis is working properly
 - Sandbox
 - SSRF Proxy
 
@@ -298,6 +299,8 @@ NOTE: `flask db migrate -m "add:takin db model update"` we need to add migration
    ```
 
 Run into the following error: https://github.com/datamonet/takin/issues/885
+
+NOTE: some Redis localhost require the default username to be explicitly set to `default`, please update the `.env` file accordingly.
 
 ## 4. Frontend Setup
 

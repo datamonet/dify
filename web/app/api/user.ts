@@ -47,13 +47,17 @@ export async function getUserInfo() {
 }
 
 export async function deleteCookie(name: string) {
-  cookies().set(name, '', {
-    domain: '.takin.ai', // 确保跨子域名的cookie
-    path: '/', // 确保路径正确
-    expires: new Date(0), // 设置过期时间为过去的时间点
-    secure: true, // 如果在 HTTPS 环境下
-    httpOnly: true, // 如果需要httpOnly属性
-  })
+  const isDevelopment = process.env.NODE_ENV === 'development'
+  const cookieOptions = {
+    // In development, omitting the domain allows the cookie to work on any local domain (localhost, 127.0.0.1, etc.)
+    // In production, set the domain to .takin.ai for cross-subdomain support
+    domain: isDevelopment ? undefined : '.takin.ai',
+    path: '/',
+    expires: new Date(0),
+    secure: !isDevelopment,
+    httpOnly: true,
+  }
+  cookies().set(name, '', cookieOptions)
 }
 
 export async function getCookie() {

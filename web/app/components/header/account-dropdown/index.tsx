@@ -33,7 +33,10 @@ export default function AppSelector({ isMobile }: IAppSelector) {
   const { userProfile, currentWorkspace, langeniusVersionInfo } = useAppContext()
   const { setShowAccountSettingModal } = useModalContext()
   const handleLogout = async () => {
-    await deleteCookie('__Secure-next-auth.session-token')
+    const isDevelopment = process.env.NODE_ENV === 'development'
+    // In development, the cookie won't have the __Secure- prefix since it's not using HTTPS
+    const cookieName = isDevelopment ? 'authjs.session-token' : '__Secure-authjs.session-token'
+    await deleteCookie(cookieName)
     await logout({
       url: '/logout',
       params: {},
