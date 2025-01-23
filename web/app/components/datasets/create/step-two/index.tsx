@@ -502,7 +502,6 @@ const StepTwo = ({
       await updateCreditsByKnowledge(
         {
           usage: cost,
-          userId: userProfile.takin_id!,
           reason: 'Dify Documents',
           source: { dataset_id: datasetId },
         },

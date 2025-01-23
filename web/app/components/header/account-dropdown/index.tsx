@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { Fragment, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { RiArrowDownSLine, RiCloseLine } from '@remixicon/react'
-import Link from 'next/link'
 import { Menu, Transition } from '@headlessui/react'
 import Indicator from '../indicator'
 import AccountAbout from '../account-about'
@@ -12,7 +11,6 @@ import Avatar from '@/app/components/base/avatar'
 import { logout } from '@/service/common'
 import { useAppContext } from '@/context/app-context'
 import { useModalContext } from '@/context/modal-context'
-import { ArrowUpRight } from '@/app/components/base/icons/src/vender/line/arrows'
 import { LogOut01 } from '@/app/components/base/icons/src/vender/line/general'
 import Modal from '@/app/components/base/modal'
 import LanguagePage from '@/app/components/header/account-setting/language-page'
@@ -64,7 +62,8 @@ export default function AppSelector({ isMobile }: IAppSelector) {
                     ${open && 'bg-gray-200'}
                   `}
                 >
-                  <Avatar name={userProfile.name} className='sm:mr-2 mr-0' size={32} />
+                  {/* takin command:展示用户头像 */}
+                  <Avatar avatar={userProfile.avatar} name={userProfile.name} className='sm:mr-2 mr-0 bg-white' size={32} />
                   {!isMobile && <>
                     {userProfile.name}
                     <RiArrowDownSLine className="w-3 h-3 ml-1 text-gray-700" />
@@ -89,7 +88,8 @@ export default function AppSelector({ isMobile }: IAppSelector) {
                 >
                   <Menu.Item>
                     <div className='flex flex-nowrap items-center px-4 py-[13px]'>
-                      <Avatar name={userProfile.name} size={36} className='mr-3' />
+                      {/* takin command:展示用户头像 */}
+                      <Avatar avatar={userProfile.avatar} name={userProfile.name} size={36} className='mr-3 bg-white' />
                       <div className='grow'>
                         <div className='leading-5 font-normal text-[14px] text-gray-800 break-all'>{userProfile.name}</div>
                         <div className='leading-[18px] text-xs font-normal text-gray-500 break-all'>{userProfile.email}</div>
@@ -120,7 +120,7 @@ export default function AppSelector({ isMobile }: IAppSelector) {
                       <div className={itemClassName} onClick={() => {
                         if (currentWorkspace.role === 'owner')
                           setShowAccountSettingModal({ payload: 'account' })
-                        else router.push(`https://takin.ai/user/${userProfile.takin_id}`)
+                        else router.push(`${process.env.NEXT_PUBLIC_TAKIN_API_URL}/user/${userProfile.takin_id}`)
                       }}>
                         <div>{t('common.userProfile.settings')}</div>
                       </div>

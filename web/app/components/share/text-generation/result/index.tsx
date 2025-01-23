@@ -315,7 +315,6 @@ const Result: FC<IResultProps> = ({
             // takin command:需要将workflowProcessData赋值，方便传输到扣费函数中
             const cost = await updateCreditsByWorkflow({
               tracing: workflowProcessData!.tracing!,
-              userId: userProfile.takin_id!,
             })
 
             const newCredits = parseFloat(((userProfile?.credits || 0) - cost).toFixed(2))

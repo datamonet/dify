@@ -246,7 +246,6 @@ export const useWorkflowRun = () => {
           // await updateUserCreditsWithTotalToken(userProfile.takin_id!, newWorkflowRunningData.result.total_tokens || 0, 'Dify Workflow', newWorkflowRunningData)
           const cost = await updateCreditsByWorkflow({
             tracing: newWorkflowRunningData.tracing!,
-            userId: userProfile.takin_id!,
           })
           const newCredits = parseFloat(((userProfile?.credits || 0) - cost).toFixed(2))
           updateCreditsWithoutRerender(newCredits)

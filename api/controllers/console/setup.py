@@ -79,7 +79,7 @@ class InsertApi(Resource):
         )
 
         # Add user to the first tenant
-        TenantService.create_tenant_member(first_tenant, account, role="normal")
+        TenantService.create_tenant_member(first_tenant, account, role="admin")
         account.current_tenant = first_tenant
 
         # Set default interface language to first language in constants

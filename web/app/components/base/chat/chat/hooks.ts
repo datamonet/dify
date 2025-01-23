@@ -444,7 +444,6 @@ export const useChat = (
             agentTools: config?.agent_mode?.tools || [],
             agentUsage: messageEnd.metadata?.usage,
             agentMod: isAgentMode ? 'Dify Agent' : 'Dify Chat',
-            userId: userProfile.takin_id,
           })
 
           const newCredits = parseFloat(((userProfile.credits || 0) - cost).toFixed(2))

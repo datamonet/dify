@@ -7,7 +7,7 @@ const Credits = () => {
   const { userProfile } = useAppContext()
 
   return (
-    <Link href={`https://takin.ai/user/${userProfile.takin_id}/billing`} className={'relative flex cursor-pointer items-center text-zinc-600 mr-2'}>
+    <Link href={`${process.env.NEXT_PUBLIC_TAKIN_API_URL}/user/${userProfile.takin_id}/billing`} className={'relative flex cursor-pointer items-center text-zinc-600 mr-2'}>
       <WalletIcon className="h-5 mr-2"/>
       <span data-credits-display>
         {(userProfile.credits || 0).toFixed(2)}
