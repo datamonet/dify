@@ -89,8 +89,7 @@ class App(db.Model):
     updated_by = db.Column(StringUUID, nullable=True)
     updated_at = db.Column(db.DateTime, nullable=False, server_default=db.text("CURRENT_TIMESTAMP(0)"))
     use_icon_as_answer_icon = db.Column(db.Boolean, nullable=False, server_default=db.text("false"))
-    username = db.Column(db.String, nullable=True)  # takin field: to show which apps belongs to which takin user
-
+ 
     @property
     def desc_or_prompt(self):
         if self.description:
