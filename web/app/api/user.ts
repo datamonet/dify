@@ -19,7 +19,7 @@ export async function getUserInfo() {
   try {
     const token = await getCookie()
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_TAKIN_API_URL}/api/integrations/user`,
+      `${process.env.NEXT_PUBLIC_TAKIN_API_URL}/api/external/user`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

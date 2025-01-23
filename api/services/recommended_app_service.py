@@ -59,7 +59,7 @@ class RecommendedAppService:
         try:
             print(emails)
             response = requests.post(
-                f'{os.getenv("TAKIN_API_URL", "http://127.0.0.1:3000")}/api/integrations/user',
+                f'{os.getenv("TAKIN_API_URL", "http://127.0.0.1:3000")}/api/external/user',
                 json={"emails": emails}
             )
             print(response.json())
