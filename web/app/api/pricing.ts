@@ -1,5 +1,5 @@
-"use server";
-import axios from "axios";
+'use server'
+import axios from 'axios'
 
 export async function updateCreditsByAgent({
   responseItem,
@@ -9,29 +9,29 @@ export async function updateCreditsByAgent({
   userId,
 }: any) {
   const { data } = await axios.post(
-    `${process.env.TAKIN_API_URL}/api/pricing/agent`,
+    `${process.env.NEXT_PUBLIC_TAKIN_API_URL}/api/pricing/agent`,
     {
       responseItem,
       agentTools,
       agentUsage,
       agentMod,
       userId,
-    }
-  );
-  console.log(data);
-  return data.totalCost;
+    },
+  )
+  console.log(data)
+  return data.totalCost
 }
 
 export async function updateCreditsByWorkflow({ tracing, userId }: any) {
   const { data } = await axios.post(
-    `${process.env.TAKIN_API_URL}/api/pricing/workflow`,
+    `${process.env.NEXT_PUBLIC_TAKIN_API_URL}/api/pricing/workflow`,
     {
       tracing,
       userId,
-    }
-  );
-  console.log(data);
-  return data.totalCost;
+    },
+  )
+  console.log(data)
+  return data.totalCost
 }
 
 export async function updateCreditsByKnowledge({
@@ -41,16 +41,16 @@ export async function updateCreditsByKnowledge({
   source,
 }: any) {
   const { data } = await axios.post(
-    `${process.env.TAKIN_API_URL}/api/pricing/knowledge`,
+    `${process.env.NEXT_PUBLIC_TAKIN_API_URL}/api/pricing/knowledge`,
     {
       usage,
       userId,
       reason,
       source,
-    }
-  );
-  console.log(data);
-  return data.totalCost;
+    },
+  )
+  console.log(data)
+  return data.totalCost
 }
 
 // // --------------------------------------------------关于Takin.AI的扣费逻辑解析 start----------------------------------------------------------------------

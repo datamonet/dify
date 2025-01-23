@@ -10,7 +10,7 @@ const SignIn = () => {
   const step = searchParams.get('step')
   useEffect(() => {
     router.replace(
-      `${process.env.TAKIN_API_URL}/signin?callbackUrl=${encodeURIComponent(process.env.NEXT_PUBLIC_CALLBACK_URL)}`,
+      `${process.env.NEXT_PUBLIC_TAKIN_API_URL}/signin?callbackUrl=${encodeURIComponent(process.env.NEXT_PUBLIC_CALLBACK_URL)}`,
     )
   }, [router])
   if (step === 'next')

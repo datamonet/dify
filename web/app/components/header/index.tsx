@@ -58,7 +58,7 @@ const Header = () => {
           <Bars3Icon className="h-4 w-4 text-gray-500" />
         </div>}
         {!isMobile && <>
-          <Link href={process.env.TAKIN_API_URL} className='flex items-center mr-4'>
+          <Link href={process.env.NEXT_PUBLIC_TAKIN_API_URL!} className='flex items-center mr-4'>
             <LogoSite />
           </Link>
           {/* {systemFeatures.license.status === LicenseStatus.NONE && <GithubStar />} */}
@@ -66,7 +66,7 @@ const Header = () => {
       </div>
       {isMobile && (
         <div className='flex'>
-          <Link href={process.env.TAKIN_API_URL} className='flex items-center mr-4'>
+          <Link href={process.env.NEXT_PUBLIC_TAKIN_API_URL!} className='flex items-center mr-4'>
             <LogoSite className='object-contain' />
           </Link>
           {/* {systemFeatures.license.status === LicenseStatus.NONE && <GithubStar />} */}
@@ -84,7 +84,7 @@ const Header = () => {
         <LicenseNav />
         <EnvNav />
         {/* takin commadnd: 积分 */}
-        <Credits /> 
+        <Credits />
         {enableBilling && (
           <div className='mr-3 select-none'>
             <HeaderBillingBtn onClick={handlePlanClick} />
