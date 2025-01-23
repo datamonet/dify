@@ -4,16 +4,6 @@ Takin Frontend is running locally: `http://localhost:3000`
 Dify Frontend is running locally: `http://localhost:3001`
 Dify API is running locally: `http://localhost:5001`
 
-⚠️ **Important Note About TAKIN_API_URL**
-Before proceeding with deployment, please note:
-- For backend use `TAKIN_API_URL=http://localhost:3000`
-- for front end use `NEXT_PUBLIC_TAKIN_API_URL=http://localhost:3000`
-- It determines where the system accesses user information, billing operations, and other integration APIs
-- Must be properly configured in both:
-  - Frontend (.env): Controls authentication and user interface integrations： `web/.env`
-  - Backend (.env): Controls billing operations and user information retrieval: `api/.env`
-
-
 ## Local PostgreSQL Installation and Configuration
 
 1. Set up PostgreSQL locally by following the instructions below: https://github.com/datamonet/takin-test?tab=readme-ov-file#local-database-setup
