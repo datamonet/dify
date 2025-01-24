@@ -144,9 +144,7 @@ services:
       CONSOLE_API_URL: ${CONSOLE_API_URL:-}
       APP_API_URL: ${APP_API_URL:-}
       SENTRY_DSN: ${WEB_SENTRY_DSN:-}
-      TAKIN_API_URL: ${TAKIN_API_URL:-}
-      EMAIL_ACCESS_KEY_ID: ${EMAIL_SECRET_ACCESS_KEY:-}
-      EMAIL_SECRET_ACCESS_KEY: ${EMAIL_SECRET_ACCESS_KEY:-}
+      NEXT_PUBLIC_TAKIN_API_URL: ${TAKIN_API_URL:-}
   # The DifySandbox
   sandbox:
     image: langgenius/dify-sandbox:0.2.10

@@ -27,9 +27,6 @@ WORKDIR /app/web
 COPY --from=packages /app/web/ .
 COPY . .
 
-# Generate Prisma Client
-RUN yarn prisma generate
-
 RUN yarn build
 
 
@@ -54,8 +51,6 @@ WORKDIR /app/web
 COPY --from=builder /app/web/public ./public
 COPY --from=builder /app/web/.next/standalone ./
 COPY --from=builder /app/web/.next/static ./.next/static
-COPY --from=builder /app/web/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/web/node_modules/@prisma ./node_modules/@prisma
 
 COPY docker/pm2.json ./pm2.json
 COPY docker/entrypoint.sh ./entrypoint.sh
