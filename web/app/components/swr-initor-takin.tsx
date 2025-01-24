@@ -56,8 +56,10 @@ const SwrInitor = ({
 
       console.log('[SwrInitor] token 不匹配，更新 localStorage 并重定向到 /apps')
       localStorage?.setItem('console_token', token)
-      router.replace('/apps', { forceOptimisticNavigation: false } as any)
       setInit(true)
+
+      if (pathname !== '/apps')
+        router.replace('/apps')
     }
 
     checkAuth()
