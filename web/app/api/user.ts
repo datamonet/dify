@@ -33,7 +33,6 @@ export async function getUserInfo() {
 
     return {
       ...userData,
-      image: `${process.env.NEXT_PUBLIC_TAKIN_API_URL}${userData.image}`,
       credits:
         userData.subscriptionCredits
         + userData.extraCredits
@@ -46,8 +45,13 @@ export async function getUserInfo() {
   }
 }
 
-export async function deleteCookie(name: string) {
-  const isDevelopment = process.env.NODE_ENV === 'development'
+const isDevelopment = process.env.NODE_ENV === 'development'
+
+const tokenName = isDevelopment
+  ? 'authjs.session-token'
+  : '__Secure-authjs.session-token'
+
+export async function deleteCookie() {
   const cookieOptions = {
     // In development, omitting the domain allows the cookie to work on any local domain (localhost, 127.0.0.1, etc.)
     // In production, set the domain to .takin.ai for cross-subdomain support
@@ -57,13 +61,9 @@ export async function deleteCookie(name: string) {
     secure: !isDevelopment,
     httpOnly: true,
   }
-  cookies().set(name, '', cookieOptions)
+  cookies().set(tokenName, '', cookieOptions)
 }
 
 export async function getCookie() {
-  const isProd = process.env.NODE_ENV === 'production'
-  const tokenName = isProd
-    ? '__Secure-authjs.session-token'
-    : 'authjs.session-token'
   return cookies().get(tokenName)?.value
 }
