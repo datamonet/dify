@@ -94,7 +94,7 @@ This will start the following services:
    ```
    S3_ADDRESS_STYLE=path
    S3_ENDPOINT=https://s3.us-east-1.amazonaws.com
-   S3_BUCKET_NAME=takin-dify-dev
+   S3_BUCKET_NAME=takin-dev
    S3_ACCESS_KEY=xxx
    S3_SECRET_KEY=xxx
    S3_REGION=us-east-1
