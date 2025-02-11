@@ -27,6 +27,11 @@ WORKDIR /app/web
 COPY --from=packages /app/web/ .
 COPY . .
 
+# takin command:添加构建参数
+ARG NEXT_PUBLIC_TAKIN_API_URL
+ENV NEXT_PUBLIC_TAKIN_API_URL=${NEXT_PUBLIC_TAKIN_API_URL}
+
+
 RUN yarn build
 
 
