@@ -503,7 +503,7 @@ const StepTwo = ({
         {
           usage: cost,
           reason: 'Dify Documents',
-          source: { dataset_id: datasetId },
+          source: { dataset_id: (datasetId || res.dataset?.id) || '' },
         },
       )
       const newCredits = parseFloat(((userProfile?.credits || 0) - cost).toFixed(2))
