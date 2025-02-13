@@ -120,7 +120,7 @@ export default function AppSelector({ isMobile }: IAppSelector) {
                       <div className={itemClassName} onClick={() => {
                         if (currentWorkspace.role === 'owner')
                           setShowAccountSettingModal({ payload: 'account' })
-                        else router.push(`${process.env.NEXT_PUBLIC_TAKIN_API_URL}/user/${userProfile.takin_id}`)
+                        else router.push(`${process.env.NEXT_PUBLIC_TAKIN_API_URL}/user`)
                       }}>
                         <div>{t('common.userProfile.settings')}</div>
                       </div>
