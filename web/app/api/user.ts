@@ -30,14 +30,8 @@ export async function getUserInfo() {
 
     if (!userData)
       return null
-
-    return {
-      ...userData,
-      credits:
-        userData.subscriptionCredits
-        + userData.extraCredits
-        + userData.subscriptionPurchasedCredits,
-    } as User
+    // takin command: xmu 只有一个积分信息
+    return userData as User
   }
   catch (error) {
     console.error('Error fetching user:', error)
