@@ -1,18 +1,18 @@
 import React from 'react'
-import { useContext } from 'use-context-selector'
 import ChartView from './chartView'
 import CardView from './cardView'
 import TracingPanel from './tracing/panel'
 import ApikeyInfoPanel from '@/app/components/app/overview/apikey-info-panel'
-import AppContext from '@/context/app-context'
+import { useAppContext } from '@/context/app-context'
+
 export type IDevelopProps = {
   params: { appId: string }
 }
 
-const Overview = async ({
+const Overview = ({
   params: { appId },
 }: IDevelopProps) => {
-  const { userProfile } = useContext(AppContext)
+  const { userProfile } = useAppContext()
 
   return (
     <div className="h-full px-4 sm:px-16 py-6 overflow-scroll">
