@@ -440,6 +440,7 @@ export const useChat = (
           // takin command:导入扣费模块。
 
           const cost = await updateCreditsByAgent({
+            questionItem,
             responseItem,
             agentTools: config?.agent_mode?.tools || [],
             agentUsage: messageEnd.metadata?.usage,

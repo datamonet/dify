@@ -3,6 +3,7 @@ import axios from 'axios'
 import { getCookie } from './user'
 
 export async function updateCreditsByAgent({
+  questionItem,
   responseItem,
   agentTools,
   agentUsage,
@@ -12,6 +13,7 @@ export async function updateCreditsByAgent({
   const { data } = await axios.post(
     `${process.env.NEXT_PUBLIC_TAKIN_API_URL}/api/external/dify/pricing/agent`,
     {
+      questionItem,
       responseItem,
       agentTools,
       agentUsage,
@@ -23,8 +25,7 @@ export async function updateCreditsByAgent({
       },
     },
   )
-
-  return data.credits
+  return data.totalCost
 }
 
 export async function updateCreditsByWorkflow({ tracing }: any) {
@@ -40,8 +41,7 @@ export async function updateCreditsByWorkflow({ tracing }: any) {
       },
     },
   )
-
-  return data.credits
+  return data.totalCost
 }
 
 export async function updateCreditsByKnowledge({
@@ -63,5 +63,5 @@ export async function updateCreditsByKnowledge({
       },
     },
   )
-  return data.credits
+  return data.totalCost
 }
