@@ -14,13 +14,16 @@ from fields.conversation_fields import (
 )
 from libs.helper import uuid_value
 from models.model import App, AppMode, EndUser
+from models.account import Account
 from services.conversation_service import ConversationService
 
 
 class ConversationApi(Resource):
-    @validate_app_token(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.QUERY))
+    # takin command：为了保证数据和用户关联，开启require_account
+    @validate_app_token(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.QUERY, require_account=True))
     @marshal_with(conversation_infinite_scroll_pagination_fields)
-    def get(self, app_model: App, end_user: EndUser):
+    # takin command：不允许匿名用户，end_user修改成account。
+    def get(self, app_model: App, account: Account):
         app_mode = AppMode.value_of(app_model.mode)
         if app_mode not in {AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.ADVANCED_CHAT}:
             raise NotChatAppError()
@@ -41,7 +44,7 @@ class ConversationApi(Resource):
         try:
             return ConversationService.pagination_by_last_id(
                 app_model=app_model,
-                user=end_user,
+                user=account,
                 last_id=args["last_id"],
                 limit=args["limit"],
                 invoke_from=InvokeFrom.SERVICE_API,
@@ -52,26 +55,26 @@ class ConversationApi(Resource):
 
 
 class ConversationDetailApi(Resource):
-    @validate_app_token(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.JSON))
+    @validate_app_token(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.JSON, require_account=True))
     @marshal_with(conversation_delete_fields)
-    def delete(self, app_model: App, end_user: EndUser, c_id):
+    def delete(self, app_model: App, account: Account, c_id):
         app_mode = AppMode.value_of(app_model.mode)
         if app_mode not in {AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.ADVANCED_CHAT}:
             raise NotChatAppError()
 
         conversation_id = str(c_id)
-
+    # takin command：不允许匿名用户，end_user修改成account。
         try:
-            ConversationService.delete(app_model, conversation_id, end_user)
+            ConversationService.delete(app_model, conversation_id, account)
         except services.errors.conversation.ConversationNotExistsError:
             raise NotFound("Conversation Not Exists.")
         return {"result": "success"}, 200
 
 
 class ConversationRenameApi(Resource):
-    @validate_app_token(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.JSON))
+    @validate_app_token(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.JSON, require_account=True))
     @marshal_with(simple_conversation_fields)
-    def post(self, app_model: App, end_user: EndUser, c_id):
+    def post(self, app_model: App, account: Account, c_id):
         app_mode = AppMode.value_of(app_model.mode)
         if app_mode not in {AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.ADVANCED_CHAT}:
             raise NotChatAppError()
@@ -82,9 +85,9 @@ class ConversationRenameApi(Resource):
         parser.add_argument("name", type=str, required=False, location="json")
         parser.add_argument("auto_generate", type=bool, required=False, default=False, location="json")
         args = parser.parse_args()
-
+    # takin command：不允许匿名用户，end_user修改成account。
         try:
-            return ConversationService.rename(app_model, conversation_id, end_user, args["name"], args["auto_generate"])
+            return ConversationService.rename(app_model, conversation_id, account, args["name"], args["auto_generate"])
         except services.errors.conversation.ConversationNotExistsError:
             raise NotFound("Conversation Not Exists.")
 

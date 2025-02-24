@@ -12,14 +12,14 @@ from controllers.service_api.app.error import (
 )
 from controllers.service_api.wraps import FetchUserArg, WhereisUserArg, validate_app_token
 from fields.file_fields import file_fields
-from models.model import App, EndUser
+from models.model import App, Account
 from services.file_service import FileService
 
 
 class FileApi(Resource):
-    @validate_app_token(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.FORM))
+    @validate_app_token(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.FORM, required=True, require_account=True))
     @marshal_with(file_fields)
-    def post(self, app_model: App, end_user: EndUser):
+    def post(self, app_model: App, account: Account):
         file = request.files["file"]
 
         # check file
@@ -40,7 +40,7 @@ class FileApi(Resource):
                 filename=file.filename,
                 content=file.read(),
                 mimetype=file.mimetype,
-                user=end_user,
+                user=account,
             )
         except services.errors.file.FileTooLargeError as file_too_large_error:
             raise FileTooLargeError(file_too_large_error.description)

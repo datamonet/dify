@@ -25,7 +25,7 @@ from core.model_runtime.errors.invoke import InvokeError
 from extensions.ext_database import db
 from fields.workflow_app_log_fields import workflow_app_log_pagination_fields
 from libs import helper
-from models.model import App, AppMode, EndUser
+from models.model import App, AppMode, Account
 from models.workflow import WorkflowRun
 from services.app_generate_service import AppGenerateService
 from services.workflow_app_service import WorkflowAppService
@@ -63,8 +63,8 @@ class WorkflowRunDetailApi(Resource):
 
 
 class WorkflowRunApi(Resource):
-    @validate_app_token(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.JSON, required=True))
-    def post(self, app_model: App, end_user: EndUser):
+    @validate_app_token(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.JSON, required=True, require_account=True))
+    def post(self, app_model: App, account: Account):
         """
         Run workflow
         """
@@ -82,7 +82,7 @@ class WorkflowRunApi(Resource):
 
         try:
             response = AppGenerateService.generate(
-                app_model=app_model, user=end_user, args=args, invoke_from=InvokeFrom.SERVICE_API, streaming=streaming
+                app_model=app_model, user=account, args=args, invoke_from=InvokeFrom.SERVICE_API, streaming=streaming
             )
 
             return helper.compact_generate_response(response)
@@ -102,8 +102,8 @@ class WorkflowRunApi(Resource):
 
 
 class WorkflowTaskStopApi(Resource):
-    @validate_app_token(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.JSON, required=True))
-    def post(self, app_model: App, end_user: EndUser, task_id: str):
+    @validate_app_token(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.JSON, required=True, require_account=True))
+    def post(self, app_model: App, account: Account, task_id: str):
         """
         Stop workflow task
         """
@@ -111,7 +111,7 @@ class WorkflowTaskStopApi(Resource):
         if app_mode != AppMode.WORKFLOW:
             raise NotWorkflowAppError()
 
-        AppQueueManager.set_stop_flag(task_id, InvokeFrom.SERVICE_API, end_user.id)
+        AppQueueManager.set_stop_flag(task_id, InvokeFrom.SERVICE_API, account.id)
 
         return {"result": "success"}
 

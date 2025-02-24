@@ -28,8 +28,21 @@ class WhereisUserArg(Enum):
 
 
 class FetchUserArg(BaseModel):
+    """takin command:
+    Configuration class for user argument fetching in API endpoints.
+    
+    This class defines how and where to fetch the user identifier from the request,
+    and what validation rules to apply to it.
+    
+    Attributes:
+        fetch_from: Specifies where to look for the user parameter (query/json/form)
+        required: If True, the user parameter must be provided in the request
+        require_account: If True, the user parameter must be a valid account_id from accounts table.
+                        If False, any user_id string is accepted and mapped to end_user
+    """
     fetch_from: WhereisUserArg
-    required: bool = False
+    required: bool = False      # If True, the user parameter must be provided in the request
+    require_account: bool = False  # If True, requires valid account_id from accounts table
 
 
 def validate_app_token(view: Optional[Callable] = None, *, fetch_user_arg: Optional[FetchUserArg] = None):
@@ -67,6 +80,13 @@ def validate_app_token(view: Optional[Callable] = None, *, fetch_user_arg: Optio
 
                 if not user_id and fetch_user_arg.required:
                     raise ValueError("Arg user must be provided.")
+                    
+                if fetch_user_arg.require_account:
+                    # When require_account is True, user_id must be a valid account_id
+                    account = db.session.query(Account).filter(Account.id == user_id).first()
+                    if not account:
+                        raise Forbidden("Invalid account_id provided.")
+                    kwargs["account"] = account
 
                 if user_id:
                     user_id = str(user_id)

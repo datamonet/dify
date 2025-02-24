@@ -23,8 +23,8 @@ export async function updateCreditsByAgent({
       },
     },
   )
-  console.log(data)
-  return data.totalCost
+
+  return data.credits
 }
 
 export async function updateCreditsByWorkflow({ tracing }: any) {
@@ -40,8 +40,8 @@ export async function updateCreditsByWorkflow({ tracing }: any) {
       },
     },
   )
-  console.log(data)
-  return data.totalCost
+
+  return data.credits
 }
 
 export async function updateCreditsByKnowledge({
@@ -63,6 +63,5 @@ export async function updateCreditsByKnowledge({
       },
     },
   )
-  console.log(data)
-  return data.totalCost
+  return data.credits
 }
