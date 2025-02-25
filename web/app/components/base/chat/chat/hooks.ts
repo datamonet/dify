@@ -437,10 +437,9 @@ export const useChat = (
               draft.push({ ...responseItem })
             })
           handleUpdateChatList(newListWithAnswer)
-          // takin command:导入扣费模块。
-
+          // takin command:导入扣费模块，如果有文件就会传递base64和文件对象，避免传递大文件，所以先删除message_files
           const cost = await updateCreditsByAgent({
-            questionItem,
+            questionItem: { ...questionItem, message_files: undefined },
             responseItem,
             agentTools: config?.agent_mode?.tools || [],
             agentUsage: messageEnd.metadata?.usage,
