@@ -63,7 +63,7 @@ export default function AppSelector({ isMobile }: IAppSelector) {
                   `}
                 >
                   {/* takin command:展示用户头像 */}
-                  <Avatar avatar={userProfile.avatar} name={userProfile.name} className='sm:mr-2 mr-0 bg-white' size={32} />
+                  <Avatar name={userProfile.name} className='sm:mr-2 mr-0' size={32} />
                   {!isMobile && <>
                     {userProfile.name}
                     <RiArrowDownSLine className="w-3 h-3 ml-1 text-gray-700" />
@@ -89,7 +89,7 @@ export default function AppSelector({ isMobile }: IAppSelector) {
                   <Menu.Item>
                     <div className='flex flex-nowrap items-center px-4 py-[13px]'>
                       {/* takin command:展示用户头像 */}
-                      <Avatar avatar={userProfile.avatar} name={userProfile.name} size={36} className='mr-3 bg-white' />
+                      <Avatar name={userProfile.name} size={36} className='mr-3' />
                       <div className='grow'>
                         <div className='leading-5 font-normal text-[14px] text-gray-800 break-all'>{userProfile.name}</div>
                         <div className='leading-[18px] text-xs font-normal text-gray-500 break-all'>{userProfile.email}</div>
