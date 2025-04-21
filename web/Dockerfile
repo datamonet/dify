@@ -39,10 +39,10 @@ RUN yarn build
 # production stage
 FROM base AS production
 
-# 适配没有ssl的需求，将NODE_ENV设置为development
-# --build-arg NODE_ENV=development 指定值，不指定则默认为production
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
+# 适配没有ssl的需求，将BUILD_ENV设置为development
+# --build-arg BUILD_ENV=development 指定值，不指定则默认为production
+ARG BUILD_ENV=production
+ENV BUILD_ENV=${BUILD_ENV}
 ENV EDITION=SELF_HOSTED
 ENV DEPLOY_ENV=PRODUCTION
 ENV CONSOLE_API_URL=http://127.0.0.1:5001

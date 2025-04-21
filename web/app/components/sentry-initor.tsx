@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import * as Sentry from '@sentry/react'
 
-const isDevelopment = process.env.NODE_ENV === 'development'
+const isDevelopment = process.env.BUILD_ENV === 'development'
 
 const SentryInit = ({
   children,
