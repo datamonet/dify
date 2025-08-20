@@ -51,11 +51,12 @@ const tokenName = isDevelopment
   ? 'authjs.session-token'
   : '__Secure-authjs.session-token'
 
+ 
 export async function deleteCookie() {
   const cookieOptions = {
     // In development, omitting the domain allows the cookie to work on any local domain (localhost, 127.0.0.1, etc.)
     // In production, set the domain to .takin.ai for cross-subdomain support
-    domain: isDevelopment ? undefined : '.takin.ai',
+    domain: isDevelopment ? undefined : (process.env.DOMAIN || '.takin.ai'),
     path: '/',
     expires: new Date(0),
     secure: !isDevelopment,
